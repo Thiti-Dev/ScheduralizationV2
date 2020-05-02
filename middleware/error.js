@@ -24,6 +24,18 @@ const errorHandler = (err, req, res, next) => {
 	}
 	// ────────────────────────────────────────────────────────────────────────────────
 
+	//
+	// ─── POSTGRES VALIDATION ────────────────────────────────────────────────────────
+	//
+	if (err.name && err.name === 'SequelizeUniqueConstraintError') {
+		const errors = {};
+		for (let error of err.errors) {
+			errors[error.path] = error.message;
+		}
+		error.message = errors;
+	}
+	// ────────────────────────────────────────────────────────────────────────────────
+
 	res.status(error.statusCode || 500).json({
 		success: false,
 		errors: error.message || 'Server Error'
