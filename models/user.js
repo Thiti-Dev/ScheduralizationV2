@@ -42,6 +42,14 @@ module.exports = (sequelize, DataTypes) => {
 			}
 		}
 	);
+	//
+	// ─── INSTANCE METHOD ────────────────────────────────────────────────────────────
+	//
+
+	User.prototype.matchPassword = async function(enteredPassword) {
+		return await bcrypt.compare(enteredPassword, this.password);
+	};
+	// ────────────────────────────────────────────────────────────────────────────────
 
 	User.associate = function(models) {
 		// associations can be defined here
