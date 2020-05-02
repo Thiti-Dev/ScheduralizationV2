@@ -13,6 +13,11 @@ dotenv.config({ path: './config/config.env' });
 // Middlewares
 app.use(express.json());
 
+// Importing route
+const auth = require('./routes/api/auth');
+// @Apply route
+app.use('/api/auth', auth);
+
 // @Error Hander
 app.use(errorHandler);
 
