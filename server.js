@@ -8,6 +8,9 @@ const models = require('./models');
 // Load env vars
 dotenv.config({ path: './config/config.env' });
 
+// Middlewares
+app.use(express.json());
+
 // Establish the Sequelize connection with the database
 models.sequelize
 	.authenticate()
