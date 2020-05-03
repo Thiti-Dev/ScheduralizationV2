@@ -1,5 +1,6 @@
 'use strict';
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 module.exports = (sequelize, DataTypes) => {
 	const User = sequelize.define(
 		'User',
@@ -48,6 +49,16 @@ module.exports = (sequelize, DataTypes) => {
 
 	User.prototype.matchPassword = async function(enteredPassword) {
 		return await bcrypt.compare(enteredPassword, this.password);
+	};
+
+	User.prototype.getSignedJwtToken = function() {
+		return jwt.sign(
+			{ id: this._id, username: this.username, role: this.role, photo: this.photo },
+			process.env.JWT_SECRET,
+			{
+				expiresIn: process.env.JWT_EXPIRE
+			}
+		);
 	};
 	// ────────────────────────────────────────────────────────────────────────────────
 
