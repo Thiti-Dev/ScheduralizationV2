@@ -2,6 +2,8 @@ const express = require('express');
 const dotenv = require('dotenv');
 const app = express();
 
+const cookieParser = require('cookie-parser');
+
 const errorHandler = require('./middleware/error');
 
 // importing database
@@ -12,6 +14,7 @@ dotenv.config({ path: './config/config.env' });
 
 // Middlewares
 app.use(express.json());
+app.use(cookieParser());
 
 // Importing route
 const auth = require('./routes/api/auth');
