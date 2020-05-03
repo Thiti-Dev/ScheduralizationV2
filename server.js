@@ -2,9 +2,17 @@ const express = require('express');
 const dotenv = require('dotenv');
 const app = express();
 
+const colors = require('colors');
+
 const cookieParser = require('cookie-parser');
 
 const errorHandler = require('./middleware/error');
+
+//
+// ─── UTILS ──────────────────────────────────────────────────────────────────────
+//
+const formattedLog = require('./utils/formatted-log');
+// ────────────────────────────────────────────────────────────────────────────────
 
 // importing database
 const models = require('./models');
@@ -28,14 +36,14 @@ app.use(errorHandler);
 models.sequelize
 	.authenticate()
 	.then(function() {
-		console.log('Connection successful');
+		formattedLog.information(`Sequelize successfully connected`);
 	})
 	.catch(function(error) {
-		console.log('Error creating connection:', error);
+		formattedLog.information('Error creating connection:', error);
 	});
 
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => {
-	console.log(`The server is currently running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+	formattedLog.information(`The server is currently running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });
