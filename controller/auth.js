@@ -42,3 +42,18 @@ exports.login = asyncHandler(async (req, res, next) => {
 	//res.status(200).json({ success: true, data: user });
 	sendTokenResponse(user, 200, res);
 });
+
+// @desc    Get user credential (get Profile Data)
+// @route   GET /api/auth
+// @acess   Private
+exports.getProfileData = asyncHandler(async (req, res, next) => {
+	const user = await User.findByPk(req.user.id, {
+		attributes: {
+			exclude: [ 'password' ]
+		}
+	});
+	if (!user) {
+		return next(new ErrorResponse(`Your account isn't found on the database`, 400));
+	}
+	res.status(200).json({ success: true, data: user });
+});
