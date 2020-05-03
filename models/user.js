@@ -48,17 +48,14 @@ module.exports = (sequelize, DataTypes) => {
 	//
 
 	User.prototype.matchPassword = async function(enteredPassword) {
+		console.log(`[CHECKING]: ${enteredPassword} with ${this.password}`);
 		return await bcrypt.compare(enteredPassword, this.password);
 	};
 
 	User.prototype.getSignedJwtToken = function() {
-		return jwt.sign(
-			{ id: this._id, username: this.username, role: this.role, photo: this.photo },
-			process.env.JWT_SECRET,
-			{
-				expiresIn: process.env.JWT_EXPIRE
-			}
-		);
+		return jwt.sign({ id: this.id, email: this.username, studentID: this.studentID }, process.env.JWT_SECRET, {
+			expiresIn: process.env.JWT_EXPIRE
+		});
 	};
 	// ────────────────────────────────────────────────────────────────────────────────
 
