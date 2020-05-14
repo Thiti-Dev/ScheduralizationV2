@@ -4,6 +4,18 @@ import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+//
+// ─── FONTS ──────────────────────────────────────────────────────────────────────
+//
+import WebFont from 'webfontloader';
+
+WebFont.load({
+	google: {
+		families: [ 'Rajdhani', 'sans-serif' ]
+	}
+});
+// ────────────────────────────────────────────────────────────────────────────────
+
 ReactDOM.render(
 	<React.StrictMode>
 		<App />
