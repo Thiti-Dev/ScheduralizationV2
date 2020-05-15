@@ -10,7 +10,10 @@ import './App.css';
 import { Provider } from 'mobx-react';
 
 import { RootStore } from './mobx/stores/RootStore';
+import makeInspectable from 'mobx-devtools-mst';
+
 const _RootStore = new RootStore();
+makeInspectable(_RootStore);
 // ────────────────────────────────────────────────────────────────────────────────
 
 //
