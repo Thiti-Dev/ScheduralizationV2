@@ -10,6 +10,8 @@
     "axios": "^0.19.2",
     "hover.css": "^2.3.2",
     "jwt-decode": "^2.2.0",
+    "mobx": "^5.15.4",
+    "mobx-react": "^6.2.2",
     "moment": "^2.25.3",
     "react": "^16.13.1",
     "react-animated-css": "^1.2.1",
