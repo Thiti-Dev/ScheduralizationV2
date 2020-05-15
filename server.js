@@ -9,6 +9,12 @@ const cookieParser = require('cookie-parser');
 const errorHandler = require('./middleware/error');
 
 //
+// ─── SOCKET IO ──────────────────────────────────────────────────────────────────
+//
+const _socketIO = require('./utils/socketio/');
+// ────────────────────────────────────────────────────────────────────────────────
+
+//
 // ─── UTILS ──────────────────────────────────────────────────────────────────────
 //
 const formattedLog = require('./utils/formatted-log');
@@ -47,3 +53,6 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
 	formattedLog.information(`The server is currently running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });
+
+// Initialize socket.io from server
+_socketIO.initialize(server);
