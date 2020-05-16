@@ -17,6 +17,7 @@
 		"moment": "^2.25.3",
 		"react": "^16.13.1",
 		"react-animated-css": "^1.2.1",
+		"react-cookies": "^0.1.1",
 		"react-dom": "^16.13.1",
 		"react-moment": "^0.9.7",
 		"react-router-dom": "^5.1.2",
@@ -37,8 +38,16 @@
 		"extends": "react-app"
 	},
 	"browserslist": {
-		"production": [ ">0.2%", "not dead", "not op_mini all" ],
-		"development": [ "last 1 chrome version", "last 1 firefox version", "last 1 safari version" ]
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
 	},
 	"proxy": "http://localhost:5000"
 }
