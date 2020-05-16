@@ -11,6 +11,12 @@ const sendTokenResponse = require('../utils/tokenResponse');
 const sendEmail = require('../utils/sendEmail');
 // ────────────────────────────────────────────────────────────────────────────────
 
+//
+// ─── SOCKET IO ──────────────────────────────────────────────────────────────────
+//
+const _socketIO = require('../utils/socketio');
+// ────────────────────────────────────────────────────────────────────────────────
+
 // @desc    Register user
 // @route   POST /api/auth/
 // @acess   Public
@@ -59,6 +65,7 @@ exports.confirmEmail = asyncHandler(async (req, res, next) => {
 	}
 	user.confirmedAt = new Date();
 	const res_save = await user.save();
+	_socketIO.emitToRoom(user.email, 'email-status', true);
 	res.status(200).json({ success: true, data: res_save });
 });
 
