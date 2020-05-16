@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import './App.css';
 
+import cookie from 'react-cookies';
+import jwt_decode from 'jwt-decode';
+
 //
 // ─── IMPORTING VIEWS ( NOT VUE LOL ><) ────────────────────────────────────────────────────────────
 //
@@ -28,10 +31,25 @@ makeInspectable(_RootStore);
 //
 const store = {
 	rootStore: _RootStore,
-	globalStore: _RootStore.globalStore
+	globalStore: _RootStore.globalStore,
+	authStore: _RootStore.AuthStore
 };
 // ────────────────────────────────────────────────────────────────────────────────
+
+const isStillAuthenticated = (token) => {
+	//Check for token
+	if (token) {
+		_RootStore.AuthStore.setAuthenticated(true, token);
+	}
+};
+
 export default class App extends Component {
+	componentWillMount() {
+		// Big bug fixed ( changed from did mount to will mount => need to be checking before the route is created)
+		// later will decide if this has to do everytimes that the component is rendered or just once in this cycle
+		const token = cookie.load('token');
+		isStillAuthenticated(token);
+	}
 	render() {
 		return (
 			<Provider {...store}>
