@@ -9,6 +9,12 @@ import styled from 'styled-components';
 
 import axios from 'axios';
 
+//
+// ─── FAKELOAD ───────────────────────────────────────────────────────────────────
+//
+import doFakeLoadIfNeeded from '../../../utils/fakeLoader';
+// ────────────────────────────────────────────────────────────────────────────────
+
 const { Option } = Select;
 const AutoCompleteOption = AutoComplete.Option;
 
@@ -55,6 +61,8 @@ class Register extends Component {
 		const _data = this.formRef.current.getFieldsValue();
 		console.log(_data);
 		// Loading button
+		this.setState({ is_requesting: true }); // stop loading
+		await doFakeLoadIfNeeded();
 
 		try {
 			const _res = await axios.post('/api/auth', _data);
@@ -66,7 +74,7 @@ class Register extends Component {
 			});
 		} catch (error) {
 			// If Error
-			this.setState({ is_requesting: true }); // stop loading
+			this.setState({ is_requesting: false }); // stop loading
 			console.log(error.response.data);
 		}
 	}
