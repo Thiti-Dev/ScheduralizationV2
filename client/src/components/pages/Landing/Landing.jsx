@@ -31,6 +31,7 @@ import { Animated } from 'react-animated-css';
 // ─── IMPORTING SUB COMPONENT ───────────────────────────────────────────────────
 //
 import Register from './Register';
+import Login from './Login';
 // ────────────────────────────────────────────────────────────────────────────────
 
 const { Header, Content, Footer } = Layout;
@@ -109,7 +110,12 @@ export default class Landing extends Component {
 														textAlign: 'center'
 													}}
 												>
-													<Button_SignIn size="large" type="primary" ghost>
+													<Button_SignIn
+														size="large"
+														type="primary"
+														ghost
+														onClick={() => this.switchAction('login')}
+													>
 														{lang_extract('sign_in')}
 													</Button_SignIn>
 													<Button_SignIn
@@ -133,6 +139,18 @@ export default class Landing extends Component {
 												isVisible={action === 'register' ? true : false}
 											>
 												<Register on_switch={this.switchAction} />
+											</Animated>
+										) : null}
+										{t_in === 'login' ? (
+											<Animated
+												animationIn="fadeInRight"
+												animationOut="fadeOutRight"
+												// animationInDelay={200}
+												animationInDuration={1000}
+												animationOutDuration={500}
+												isVisible={action === 'login' ? true : false}
+											>
+												<Login on_switch={this.switchAction} />
 											</Animated>
 										) : null}
 									</Holder_Registration_Form>
