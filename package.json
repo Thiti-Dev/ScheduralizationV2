@@ -1,6 +1,8 @@
 {
 	"scripts": {
-		"server": "nodemon server.js"
+		"server": "nodemon server.js",
+		"client": "npm start --prefix client",
+		"dev": "concurrently \"npm run server\" \"npm run client\""
 	},
 	"name": "ScheduralizationV2",
 	"version": "1.0.0",
@@ -9,6 +11,7 @@
 	"author": "Thiti Dev <thiti.mwk.main@gmail.com>",
 	"license": "MIT",
 	"devDependencies": {
+		"concurrently": "^5.2.0",
 		"nodemon": "^2.0.3"
 	},
 	"dependencies": {
