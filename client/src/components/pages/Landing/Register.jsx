@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { Form, Input, Tooltip, Cascader, Select, Checkbox, AutoComplete, Button } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+
+import { withRouter } from 'react-router-dom';
+
+import { Form, Input, Tooltip, Cascader, Select, Checkbox, AutoComplete, Button, Spin } from 'antd';
+import { QuestionCircleOutlined, FieldNumberOutlined } from '@ant-design/icons';
 
 import styled from 'styled-components';
 
@@ -21,12 +24,22 @@ const formItemLayout = {
 	}
 };
 
-const Holder_Form = styled.div`width: 30rem;`;
+const Holder_Form = styled.div`
+	width: 30rem;
+
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+`;
 // ────────────────────────────────────────────────────────────────────────────────
 
-export default class Register extends Component {
+class Register extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			is_requesting: false
+		};
 
 		this.formRef = React.createRef();
 		this.onFormSubmitHandler = this.onFormSubmitHandler.bind(this);
@@ -35,11 +48,28 @@ export default class Register extends Component {
 		//this.formRef.useForm();
 	}
 	onFormSubmitHandler() {
-		console.log('Submitting the form');
+		// Theese function will be exceuted if user passed the antd validation state
+		console.log('[FORM]: Submitting the form');
 		const _data = this.formRef.current.getFieldsValue();
 		console.log(_data);
+		// Loading button
+		this.setState({ is_requesting: true });
+		//
+		// ─── VIRTUAL PROCESS ─────────────────────────────────────────────
+		//
+		setTimeout(() => {
+			// if complete
+			this.setState({ is_requesting: false }, () => {
+				this.props.history.push({
+					pathname: '/waitingforconfirmation',
+					state: { email: _data.email }
+				});
+			});
+		}, 3000);
+		// ─────────────────────────────────────────────────────────────────
 	}
 	render() {
+		const { is_requesting } = this.state;
 		return (
 			<React.Fragment>
 				<Holder_Form>
@@ -56,10 +86,6 @@ export default class Register extends Component {
 							label="E-mail"
 							hasFeedback
 							rules={[
-								// {
-								// 	type: 'email',
-								// 	message: 'The input is not valid E-mail!'
-								// },
 								{
 									required: true,
 									message: 'Please input your E-mail!'
@@ -75,6 +101,34 @@ export default class Register extends Component {
 							]}
 						>
 							<Input autoComplete="off" />
+						</Form.Item>
+						<Form.Item
+							name="studentID"
+							label={
+								<span>
+									Student ID&nbsp;
+									<Tooltip title="Your 11 digits student's ID number">
+										<FieldNumberOutlined />
+									</Tooltip>
+								</span>
+							}
+							rules={[
+								{
+									required: true,
+									message: 'Please input your student ID!'
+								},
+								({ getFieldValue }) => ({
+									validator(rule, value) {
+										if (!value || value.length === 11) {
+											return Promise.resolve();
+										}
+										return Promise.reject(`This is not a valid kmutt's student's ID!`);
+									}
+								})
+							]}
+							hasFeedback
+						>
+							<Input type="number" autoComplete="off" />
 						</Form.Item>
 						<Form.Item
 							name="password"
@@ -122,7 +176,7 @@ export default class Register extends Component {
 									</Tooltip>
 								</span>
 							}
-							rules={[ { required: true, message: 'Please input your username!', whitespace: true } ]}
+							rules={[ { required: true, message: 'Please input your username!', whitespace: false } ]}
 						>
 							<Input autoComplete="off" />
 						</Form.Item>
@@ -141,7 +195,12 @@ export default class Register extends Component {
 							<Input autoComplete="off" />
 						</Form.Item>
 						<div style={{ textAlign: 'right' }}>
-							<Button type="primary" htmlType="submit" style={{ marginRight: '1rem' }}>
+							<Button
+								loading={is_requesting}
+								type="primary"
+								htmlType="submit"
+								style={{ marginRight: '1rem' }}
+							>
 								Register
 							</Button>
 							<Button type="default" onClick={() => this.props.on_switch('landing')}>
@@ -154,3 +213,5 @@ export default class Register extends Component {
 		);
 	}
 }
+
+export default withRouter(Register);
