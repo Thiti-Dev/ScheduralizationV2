@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+import './App.css';
+
+//
+// ─── IMPORTING VIEWS ( NOT VUE LOL ><) ────────────────────────────────────────────────────────────
+//
 import Landing from './components/pages/Landing';
 import Home from './components/pages/Home';
-import './App.css';
+import ConfirmEmail from './components/pages/ConfirmEmail';
+// ────────────────────────────────────────────────────────────────────────────────
 
 //
 // ─── MOBX ───────────────────────────────────────────────────────────────────────
@@ -32,6 +39,7 @@ export default class App extends Component {
 					<Switch>
 						<Route exact path="/" component={Landing} />
 						<Route exact path="/home" component={Home} />
+						<Route exact path="/waitingforconfirmation" component={ConfirmEmail} />
 					</Switch>
 				</Router>
 			</Provider>
