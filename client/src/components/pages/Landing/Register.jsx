@@ -7,6 +7,8 @@ import { QuestionCircleOutlined, FieldNumberOutlined } from '@ant-design/icons';
 
 import styled from 'styled-components';
 
+import axios from 'axios';
+
 const { Option } = Select;
 const AutoCompleteOption = AutoComplete.Option;
 
@@ -47,26 +49,26 @@ class Register extends Component {
 	componentDidMount() {
 		//this.formRef.useForm();
 	}
-	onFormSubmitHandler() {
+	async onFormSubmitHandler() {
 		// Theese function will be exceuted if user passed the antd validation state
 		console.log('[FORM]: Submitting the form');
 		const _data = this.formRef.current.getFieldsValue();
 		console.log(_data);
 		// Loading button
-		this.setState({ is_requesting: true });
-		//
-		// ─── VIRTUAL PROCESS ─────────────────────────────────────────────
-		//
-		setTimeout(() => {
-			// if complete
-			this.setState({ is_requesting: false }, () => {
-				this.props.history.push({
-					pathname: '/waitingforconfirmation',
-					state: { email: _data.email }
-				});
+
+		try {
+			const _res = await axios.post('/api/auth', _data);
+
+			// If success registering
+			this.props.history.push({
+				pathname: '/waitingforconfirmation',
+				state: { email: _data.email }
 			});
-		}, 3000);
-		// ─────────────────────────────────────────────────────────────────
+		} catch (error) {
+			// If Error
+			this.setState({ is_requesting: true }); // stop loading
+			console.log(error.response.data);
+		}
 	}
 	render() {
 		const { is_requesting } = this.state;
