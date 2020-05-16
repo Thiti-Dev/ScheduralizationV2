@@ -1,4 +1,5 @@
 'use strict';
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 module.exports = (sequelize, DataTypes) => {
@@ -28,6 +29,14 @@ module.exports = (sequelize, DataTypes) => {
 			studentID: {
 				type: DataTypes.STRING(15),
 				allowNull: false
+			},
+			confirmEmail: {
+				type: DataTypes.STRING,
+				allowNull: true
+			},
+			confirmedAt: {
+				type: DataTypes.DATE,
+				allowNull: true
 			}
 		},
 		{
@@ -56,6 +65,12 @@ module.exports = (sequelize, DataTypes) => {
 		return jwt.sign({ id: this.id, email: this.username, studentID: this.studentID }, process.env.JWT_SECRET, {
 			expiresIn: process.env.JWT_EXPIRE
 		});
+	};
+
+	User.prototype.getConfirmToken = async function() {
+		const confirmToken = crypto.randomBytes(20).toString('hex');
+		this.confirmEmail = crypto.createHash('sha256').update(confirmToken).digest('hex');
+		return confirmToken;
 	};
 	// ────────────────────────────────────────────────────────────────────────────────
 
