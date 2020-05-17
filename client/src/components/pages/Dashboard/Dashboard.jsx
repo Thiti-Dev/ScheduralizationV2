@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { inject, observer } from 'mobx-react';
 //
 // ─── IMPORTING ASSET ────────────────────────────────────────────────────────────
 //
@@ -81,52 +82,64 @@ const Breadcrumb_Render = ({ history }) => (
 		</Breadcrumb.Item>
 	</Breadcrumb>
 );
+const Dashboard = inject('rootStore')(
+	observer(
+		class Dashboard extends Component {
+			render() {
+				const { startContinous, instantProcess } = this.props.rootStore.loadingStore;
+				return (
+					<React.Fragment>
+						<GlobalStyle />
+						<Outer_Holder>
+							<Breadcrumb_Render />
+							<PageHeader
+								title="Thiti Mahawannakit"
+								className="site-page-header"
+								subTitle="60090500410"
+								tags={<Tag color="blue">Student</Tag>}
+								extra={[
+									<Button key="3">Operation</Button>,
+									<Button key="2">Operation</Button>,
+									<Button key="1" type="ghost" danger>
+										Logout
+									</Button>
+								]}
+								avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
+							/>
+							<Action_Card_Holder>
+								<Card_Action
+									className="hvr-grow"
+									onClick={() => {
+										this.props.history.push('schedule');
+										instantProcess();
+									}}
+								>
+									<Card_Action_Image img={schedule_img} />
+									<Card_Action_Text>Manage/View Schedule</Card_Action_Text>
+								</Card_Action>
+								<Card_Action className="hvr-grow">
+									<Card_Action_Image img={find_img} />
+									<Card_Action_Text>Find people based on ur profession</Card_Action_Text>
+								</Card_Action>
+								<Card_Action className="hvr-grow">
+									<Card_Action_Image img={course_img} />
+									<Card_Action_Text>Add/Edit Studied Course</Card_Action_Text>
+								</Card_Action>
+								<Card_Action className="hvr-grow">
+									<Card_Action_Image img={course_feedback_img} />
+									<Card_Action_Text>Course Scoring</Card_Action_Text>
+								</Card_Action>
+								<Card_Action className="hvr-grow">
+									<Card_Action_Image img={profile_img} />
+									<Card_Action_Text>View/Edit Profile</Card_Action_Text>
+								</Card_Action>
+							</Action_Card_Holder>
+						</Outer_Holder>
+					</React.Fragment>
+				);
+			}
+		}
+	)
+);
 
-export default class Dashboard extends Component {
-	render() {
-		return (
-			<React.Fragment>
-				<GlobalStyle />
-				<Outer_Holder>
-					<Breadcrumb_Render />
-					<PageHeader
-						title="Thiti Mahawannakit"
-						className="site-page-header"
-						subTitle="60090500410"
-						tags={<Tag color="blue">Student</Tag>}
-						extra={[
-							<Button key="3">Operation</Button>,
-							<Button key="2">Operation</Button>,
-							<Button key="1" type="ghost" danger>
-								Logout
-							</Button>
-						]}
-						avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
-					/>
-					<Action_Card_Holder>
-						<Card_Action className="hvr-grow" onClick={() => this.props.history.push('schedule')}>
-							<Card_Action_Image img={schedule_img} />
-							<Card_Action_Text>Manage/View Schedule</Card_Action_Text>
-						</Card_Action>
-						<Card_Action className="hvr-grow">
-							<Card_Action_Image img={find_img} />
-							<Card_Action_Text>Find people based on ur profession</Card_Action_Text>
-						</Card_Action>
-						<Card_Action className="hvr-grow">
-							<Card_Action_Image img={course_img} />
-							<Card_Action_Text>Add/Edit Studied Course</Card_Action_Text>
-						</Card_Action>
-						<Card_Action className="hvr-grow">
-							<Card_Action_Image img={course_feedback_img} />
-							<Card_Action_Text>Course Scoring</Card_Action_Text>
-						</Card_Action>
-						<Card_Action className="hvr-grow">
-							<Card_Action_Image img={profile_img} />
-							<Card_Action_Text>View/Edit Profile</Card_Action_Text>
-						</Card_Action>
-					</Action_Card_Holder>
-				</Outer_Holder>
-			</React.Fragment>
-		);
-	}
-}
+export default Dashboard;
