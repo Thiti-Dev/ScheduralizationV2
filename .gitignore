@@ -113,3 +113,4 @@ temp/
 
 /config/*.env
 reminder.txt
+/_data
