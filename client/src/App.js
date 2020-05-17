@@ -7,6 +7,12 @@ import cookie from 'react-cookies';
 import jwt_decode from 'jwt-decode';
 
 //
+// ─── BEAUTIFY ───────────────────────────────────────────────────────────────────
+//
+import LoadingBarMobx from './components/common/LoadingBarMobx';
+// ────────────────────────────────────────────────────────────────────────────────
+
+//
 // ─── IMPORTING VIEWS ( NOT VUE LOL ><) ────────────────────────────────────────────────────────────
 //
 import Landing from './components/pages/Landing';
@@ -63,6 +69,7 @@ export default class App extends Component {
 		return (
 			<Provider {...store}>
 				<Router>
+					<LoadingBarMobx />
 					<Switch>
 						<Route exact path="/" component={Landing} />
 						<Route exact path="/home" component={Home} />
