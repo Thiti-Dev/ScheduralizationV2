@@ -85,7 +85,7 @@ const Landing = inject('authStore')(
 			componentWillMount() {
 				if (this.props.authStore.isAuthenticated) {
 					console.log('[SWITCHING]: Already authenticated => no need to show landing page');
-					this.props.history.push('/home');
+					this.props.history.push('/dashboard');
 				}
 			}
 			switchAction(action, safe_timeout = 1000) {
