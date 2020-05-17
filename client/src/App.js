@@ -13,6 +13,7 @@ import Landing from './components/pages/Landing';
 import Home from './components/pages/Home';
 import ConfirmEmail from './components/pages/ConfirmEmail';
 import Dashboard from './components/pages/Dashboard';
+import Schedule from './components/pages/Schedule';
 // ────────────────────────────────────────────────────────────────────────────────
 
 //
@@ -39,14 +40,15 @@ makeInspectable(_RootStore);
 const store = {
 	rootStore: _RootStore,
 	globalStore: _RootStore.globalStore,
-	authStore: _RootStore.AuthStore
+	authStore: _RootStore.authStore,
+	loadingStore: _RootStore.loadingStore
 };
 // ────────────────────────────────────────────────────────────────────────────────
 
 const isStillAuthenticated = (token) => {
 	//Check for token
 	if (token) {
-		_RootStore.AuthStore.setAuthenticated(true, token);
+		_RootStore.authStore.setAuthenticated(true, token);
 	}
 };
 
@@ -66,6 +68,7 @@ export default class App extends Component {
 						<Route exact path="/home" component={Home} />
 						<Route exact path="/waitingforconfirmation" component={ConfirmEmail} />
 						<PrivateRoute exact path="/dashboard" component={Dashboard} />
+						<PrivateRoute exact path="/schedule" component={Schedule} />
 					</Switch>
 				</Router>
 			</Provider>
