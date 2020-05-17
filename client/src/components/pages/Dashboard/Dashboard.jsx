@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 //
 // ─── IMPORTING ASSET ────────────────────────────────────────────────────────────
 //
@@ -12,8 +11,8 @@ import find_img from './images/find.png';
 
 // ─── ANTD ───────────────────────────────────────────────────────────────────────
 //
-import { Row, Col, Divider, Layout, Button, PageHeader, Menu, Dropdow, Tag, Typography } from 'antd';
-import { EllipsisOutlined } from '@ant-design/icons';
+import { Row, Col, Divider, Layout, Button, PageHeader, Menu, Dropdow, Tag, Typography, Breadcrumb } from 'antd';
+import { EllipsisOutlined, HomeOutlined, UserOutlined, MenuOutlined, ScheduleOutlined } from '@ant-design/icons';
 
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -74,16 +73,14 @@ const Card_Action_Text = styled.p`
 
 // ────────────────────────────────────────────────────────────────────────────────
 
-//
-// ─── COMPONENT RELATED ──────────────────────────────────────────────────────────
-//
-const routes = [
-	{
-		path: 'index',
-		breadcrumbName: 'Dashboard'
-	}
-];
-// ────────────────────────────────────────────────────────────────────────────────
+const Breadcrumb_Render = ({ history }) => (
+	<Breadcrumb style={{ marginLeft: '1.5rem' }}>
+		<Breadcrumb.Item>
+			<MenuOutlined />
+			<span>Dashboard</span>
+		</Breadcrumb.Item>
+	</Breadcrumb>
+);
 
 export default class Dashboard extends Component {
 	render() {
@@ -91,6 +88,7 @@ export default class Dashboard extends Component {
 			<React.Fragment>
 				<GlobalStyle />
 				<Outer_Holder>
+					<Breadcrumb_Render />
 					<PageHeader
 						title="Thiti Mahawannakit"
 						className="site-page-header"
@@ -104,10 +102,9 @@ export default class Dashboard extends Component {
 							</Button>
 						]}
 						avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
-						breadcrumb={{ routes }}
 					/>
 					<Action_Card_Holder>
-						<Card_Action className="hvr-grow">
+						<Card_Action className="hvr-grow" onClick={() => this.props.history.push('schedule')}>
 							<Card_Action_Image img={schedule_img} />
 							<Card_Action_Text>Manage/View Schedule</Card_Action_Text>
 						</Card_Action>
