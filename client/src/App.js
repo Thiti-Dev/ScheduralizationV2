@@ -12,6 +12,13 @@ import jwt_decode from 'jwt-decode';
 import Landing from './components/pages/Landing';
 import Home from './components/pages/Home';
 import ConfirmEmail from './components/pages/ConfirmEmail';
+import Dashboard from './components/pages/Dashboard';
+// ────────────────────────────────────────────────────────────────────────────────
+
+//
+// ─── AUTH FLOW ──────────────────────────────────────────────────────────────────
+//
+import PrivateRoute from './components/common/PrivateRoute';
 // ────────────────────────────────────────────────────────────────────────────────
 
 //
@@ -58,6 +65,7 @@ export default class App extends Component {
 						<Route exact path="/" component={Landing} />
 						<Route exact path="/home" component={Home} />
 						<Route exact path="/waitingforconfirmation" component={ConfirmEmail} />
+						<PrivateRoute exact path="/dashboard" component={Dashboard} />
 					</Switch>
 				</Router>
 			</Provider>
