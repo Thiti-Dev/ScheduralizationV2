@@ -116,7 +116,6 @@ const Day_Time_Holder = styled.div`
 	/* background-color: lightcoral; */
 	width: 1565px;
 	height: 3.6rem;
-	line-height: 3.6rem;
 	/* text-align: left; */
 	border-radius: 10rem;
 `;
@@ -127,7 +126,6 @@ const Day_Time_Inside = styled.div`
 		`${(!isHavingDecimalPlaceThatGreaterThanZero(props.hour) ? props.hour : props.hour + 0.2) * 60 * 0.148}rem`};
 	height: 3.6rem;
 	line-height: 3.6rem;
-	padding-left: 1.5rem;
 	/* text-align: left; */
 	border-radius: 10rem;
 	margin-left: ${(props) =>
@@ -137,6 +135,36 @@ const Day_Time_Inside = styled.div`
 
 	user-select: none;
 	position: absolute;
+`;
+
+const Day_Time_Course_Name = styled.p`
+	width: 100%;
+	height: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+	white-space: nowrap;
+
+	::-webkit-scrollbar {
+		height: 8px;
+		border-radius: 10rem;
+	}
+
+	::-webkit-scrollbar-track-piece {
+		margin: 2rem;
+		border-radius: 10rem;
+		background: grey;
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.5);
+		border-radius: 10rem;
+	}
+
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+		background: #555;
+	}
 `;
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -168,6 +196,43 @@ const normal_time_slot = [
 	[ '4.00 PM', 16.0 ],
 	[ '5.00 PM', 17.0 ],
 	[ '6.00 PM', 18.0 ]
+];
+// ────────────────────────────────────────────────────────────────────────────────
+
+//
+// ─── MOCK DATA ──────────────────────────────────────────────────────────────────
+//
+
+const _user_assigned_course = [
+	// array of assigned courses
+	{
+		courseID: 'LNG220',
+		courseName: 'Academic English',
+		day: 1, // 1 == Monday
+		start: 8.3, // 8.30 AM
+		duration: 3 // 3 hours
+	},
+	{
+		courseID: 'GEN111',
+		courseName: 'Man and Ethics of Living',
+		day: 1, // 1 == Monday
+		start: 13.3, // 13.30 PM
+		duration: 3 // 3 hours
+	},
+	{
+		courseID: 'CSS112',
+		courseName: 'Computer Programming I	',
+		day: 3, // 3 == Wednesday
+		start: 9,
+		duration: 3
+	},
+	{
+		courseID: 'CSS 322',
+		courseName: 'System Analysis and Design	',
+		day: 4, // 4 == Thursday
+		start: 10.3,
+		duration: 1.3
+	}
 ];
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -234,12 +299,24 @@ export default class Schedule extends Component {
 											return (
 												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(1, value[1])}>
 													<Day_Time_Holder>
-														<Day_Time_Inside hour={3} start={8.3}>
-															LNG220 Academic English
-														</Day_Time_Inside>
-														<Day_Time_Inside hour={3} start={13.3}>
-															GEN111 Man and Ethics of Living
-														</Day_Time_Inside>
+														{_user_assigned_course.map((courseData) => {
+															if (courseData.day === 1) {
+																return (
+																	<React.Fragment>
+																		<Day_Time_Inside
+																			hour={courseData.duration}
+																			start={courseData.start}
+																		>
+																			<Day_Time_Course_Name>
+																				{courseData.courseID +
+																					' ' +
+																					courseData.courseName}
+																			</Day_Time_Course_Name>
+																		</Day_Time_Inside>
+																	</React.Fragment>
+																);
+															}
+														})}
 													</Day_Time_Holder>
 												</Custom_Td>
 											);
@@ -256,7 +333,30 @@ export default class Schedule extends Component {
 									<Custom_Day_Td>Tuesday</Custom_Day_Td>
 									{normal_time_slot.map((value, index) => {
 										if (index === 0) {
-											return <Custom_Td>{/* <Day_Time_Holder /> */}</Custom_Td>;
+											return (
+												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(2, value[1])}>
+													<Day_Time_Holder>
+														{_user_assigned_course.map((courseData) => {
+															if (courseData.day === 2) {
+																return (
+																	<React.Fragment>
+																		<Day_Time_Inside
+																			hour={courseData.duration}
+																			start={courseData.start}
+																		>
+																			<Day_Time_Course_Name>
+																				{courseData.courseID +
+																					' ' +
+																					courseData.courseName}
+																			</Day_Time_Course_Name>
+																		</Day_Time_Inside>
+																	</React.Fragment>
+																);
+															}
+														})}
+													</Day_Time_Holder>
+												</Custom_Td>
+											);
 										} else {
 											return (
 												<Custom_Td
@@ -270,7 +370,30 @@ export default class Schedule extends Component {
 									<Custom_Day_Td>Wednesday</Custom_Day_Td>
 									{normal_time_slot.map((value, index) => {
 										if (index === 0) {
-											return <Custom_Td>{/* <Day_Time_Holder /> */}</Custom_Td>;
+											return (
+												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(3, value[1])}>
+													<Day_Time_Holder>
+														{_user_assigned_course.map((courseData) => {
+															if (courseData.day === 3) {
+																return (
+																	<React.Fragment>
+																		<Day_Time_Inside
+																			hour={courseData.duration}
+																			start={courseData.start}
+																		>
+																			<Day_Time_Course_Name>
+																				{courseData.courseID +
+																					' ' +
+																					courseData.courseName}
+																			</Day_Time_Course_Name>
+																		</Day_Time_Inside>
+																	</React.Fragment>
+																);
+															}
+														})}
+													</Day_Time_Holder>
+												</Custom_Td>
+											);
 										} else {
 											return (
 												<Custom_Td
@@ -284,7 +407,30 @@ export default class Schedule extends Component {
 									<Custom_Day_Td>Thursday</Custom_Day_Td>
 									{normal_time_slot.map((value, index) => {
 										if (index === 0) {
-											return <Custom_Td>{/* <Day_Time_Holder /> */}</Custom_Td>;
+											return (
+												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(4, value[1])}>
+													<Day_Time_Holder>
+														{_user_assigned_course.map((courseData) => {
+															if (courseData.day === 4) {
+																return (
+																	<React.Fragment>
+																		<Day_Time_Inside
+																			hour={courseData.duration}
+																			start={courseData.start}
+																		>
+																			<Day_Time_Course_Name>
+																				{courseData.courseID +
+																					' ' +
+																					courseData.courseName}
+																			</Day_Time_Course_Name>
+																		</Day_Time_Inside>
+																	</React.Fragment>
+																);
+															}
+														})}
+													</Day_Time_Holder>
+												</Custom_Td>
+											);
 										} else {
 											return (
 												<Custom_Td
@@ -298,7 +444,30 @@ export default class Schedule extends Component {
 									<Custom_Day_Td>Friday</Custom_Day_Td>
 									{normal_time_slot.map((value, index) => {
 										if (index === 0) {
-											return <Custom_Td>{/* <Day_Time_Holder /> */}</Custom_Td>;
+											return (
+												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(5, value[1])}>
+													<Day_Time_Holder>
+														{_user_assigned_course.map((courseData) => {
+															if (courseData.day === 5) {
+																return (
+																	<React.Fragment>
+																		<Day_Time_Inside
+																			hour={courseData.duration}
+																			start={courseData.start}
+																		>
+																			<Day_Time_Course_Name>
+																				{courseData.courseID +
+																					' ' +
+																					courseData.courseName}
+																			</Day_Time_Course_Name>
+																		</Day_Time_Inside>
+																	</React.Fragment>
+																);
+															}
+														})}
+													</Day_Time_Holder>
+												</Custom_Td>
+											);
 										} else {
 											return (
 												<Custom_Td
@@ -312,7 +481,30 @@ export default class Schedule extends Component {
 									<Custom_Day_Td>Saturday</Custom_Day_Td>
 									{normal_time_slot.map((value, index) => {
 										if (index === 0) {
-											return <Custom_Td>{/* <Day_Time_Holder /> */}</Custom_Td>;
+											return (
+												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(6, value[1])}>
+													<Day_Time_Holder>
+														{_user_assigned_course.map((courseData) => {
+															if (courseData.day === 6) {
+																return (
+																	<React.Fragment>
+																		<Day_Time_Inside
+																			hour={courseData.duration}
+																			start={courseData.start}
+																		>
+																			<Day_Time_Course_Name>
+																				{courseData.courseID +
+																					' ' +
+																					courseData.courseName}
+																			</Day_Time_Course_Name>
+																		</Day_Time_Inside>
+																	</React.Fragment>
+																);
+															}
+														})}
+													</Day_Time_Holder>
+												</Custom_Td>
+											);
 										} else {
 											return (
 												<Custom_Td
@@ -326,7 +518,30 @@ export default class Schedule extends Component {
 									<Custom_Day_Td>Sunday</Custom_Day_Td>
 									{normal_time_slot.map((value, index) => {
 										if (index === 0) {
-											return <Custom_Td>{/* <Day_Time_Holder /> */}</Custom_Td>;
+											return (
+												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(7, value[1])}>
+													<Day_Time_Holder>
+														{_user_assigned_course.map((courseData) => {
+															if (courseData.day === 7) {
+																return (
+																	<React.Fragment>
+																		<Day_Time_Inside
+																			hour={courseData.duration}
+																			start={courseData.start}
+																		>
+																			<Day_Time_Course_Name>
+																				{courseData.courseID +
+																					' ' +
+																					courseData.courseName}
+																			</Day_Time_Course_Name>
+																		</Day_Time_Inside>
+																	</React.Fragment>
+																);
+															}
+														})}
+													</Day_Time_Holder>
+												</Custom_Td>
+											);
 										} else {
 											return (
 												<Custom_Td
