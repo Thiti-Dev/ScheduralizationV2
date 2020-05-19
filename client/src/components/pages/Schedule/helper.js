@@ -30,3 +30,24 @@ export function convertClockTimeToMinutesFromStart(raw_time, _start_from = start
 
 	return Math.abs(_raw_time * 60 + addition_minute_value_needed - additional_from_custom_start_from); // minutes form
 }
+
+export function minusHourExactNoAdditionalMinuteRemail(_time, _hour) {
+	const _calculatable_time = parseInt(_time) - _hour;
+	let finalized_time;
+	if (_calculatable_time < 10) {
+		finalized_time = '0' + _calculatable_time + '.00';
+	} else {
+		finalized_time = _calculatable_time + '.00';
+	}
+	return finalized_time;
+}
+export function addHourExactNoAdditionalMinuteRemail(_time, _hour) {
+	const _calculatable_time = parseInt(_time) + _hour;
+	let finalized_time;
+	if (_calculatable_time < 10) {
+		finalized_time = '0' + _calculatable_time + '.00';
+	} else {
+		finalized_time = _calculatable_time + '.00';
+	}
+	return finalized_time;
+}
