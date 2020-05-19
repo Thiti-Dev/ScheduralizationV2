@@ -13,7 +13,11 @@ import styled, { createGlobalStyle } from 'styled-components';
 // ─── UTIL ───────────────────────────────────────────────────────────────────────
 //
 import { isHavingDecimalPlaceThatGreaterThanZero } from '../../../utils/mathHelper';
-import { convertClockTimeToMinutesFromStart } from './helper';
+import {
+	convertClockTimeToMinutesFromStart,
+	addHourExactNoAdditionalMinuteRemail,
+	minusHourExactNoAdditionalMinuteRemail
+} from './helper';
 // ────────────────────────────────────────────────────────────────────────────────
 
 const { Header, Content, Footer } = Layout;
@@ -123,12 +127,12 @@ const Day_Time_Holder = styled.div`
 
 const Day_Time_Inside = styled.div`
 	background-color: lightcoral;
-	width: ${(props) => `${convertClockTimeToMinutesFromStart(props.start, props.end) * 0.148}rem`};
+	width: ${(props) => `${convertClockTimeToMinutesFromStart(props.start, props.end) * 0.14835}rem`};
 	height: 3.6rem;
 	line-height: 3.6rem;
 	/* text-align: left; */
 	border-radius: 10rem;
-	margin-left: ${(props) => `${convertClockTimeToMinutesFromStart(props.start) * 0.148}rem`};
+	margin-left: ${(props) => `${convertClockTimeToMinutesFromStart(props.start) * 0.14835}rem`};
 
 	user-select: none;
 	position: absolute;
@@ -182,17 +186,17 @@ const Breadcrumb_Render = ({ history }) => (
 // ─── MAPPING UTIL ───────────────────────────────────────────────────────────────
 //
 const normal_time_slot = [
-	[ '08.00 AM', 8.0 ],
-	[ '09.00 AM', 9.0 ],
-	[ '10.00 AM', 10.0 ],
-	[ '11.00 AM', 11.0 ],
-	[ '12.00 PM', 12.0 ],
-	[ '1.00 PM', 13.0 ],
-	[ '2.00 PM', 14.0 ],
-	[ '3.00 PM', 15.0 ],
-	[ '4.00 PM', 16.0 ],
-	[ '5.00 PM', 17.0 ],
-	[ '6.00 PM', 18.0 ]
+	[ '08.00 AM', '08.00' ],
+	[ '09.00 AM', '09.00' ],
+	[ '10.00 AM', '10.00' ],
+	[ '11.00 AM', '11.00' ],
+	[ '12.00 PM', '12.00' ],
+	[ '1.00 PM', '13.00' ],
+	[ '2.00 PM', '14.00' ],
+	[ '3.00 PM', '15.00' ],
+	[ '4.00 PM', '16.00' ],
+	[ '5.00 PM', '17.00' ],
+	[ '6.00 PM', '18.00' ]
 ];
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -206,8 +210,8 @@ const _user_assigned_course = [
 		courseID: 'LNG220',
 		courseName: 'Academic English',
 		day: 1, // 1 == Monday
-		start: '8.30', // 8.30 AM
-		end: '11.00'
+		start: '08.30', // 8.30 AM
+		end: '11.30'
 	},
 	{
 		courseID: 'GEN111',
@@ -220,7 +224,7 @@ const _user_assigned_course = [
 		courseID: 'CSS112',
 		courseName: 'Computer Programming I	',
 		day: 3, // 3 == Wednesday
-		start: '9.00',
+		start: '09.00',
 		end: '12.00'
 	},
 	{
@@ -234,7 +238,7 @@ const _user_assigned_course = [
 		courseID: 'AWK101',
 		courseName: 'Learn how to be like thiti	',
 		day: 6, // 4 == Thursday
-		start: '9.00',
+		start: '09.00',
 		end: '14.20'
 	}
 ];
@@ -251,9 +255,62 @@ export default class Schedule extends Component {
 	onSelectTimelineInSchedule(day, start_time) {
 		console.log('[DEBUG]: day = ' + day + ', start_time = ' + start_time);
 
+		//
+		// ─── TIME SLOT AVAILABLE CALCULATION ─────────────────────────────
+		//
+		// @ Iterating over the courses data by using every instead of forEach (Performance increment [ The iteration can be stopped ])
+		// @ REQUIRE 2 - CUSTOM MADE UTIL (minusHourExactNoAdditionalMinuteRemail,addHourExactNoAdditionalMinuteRemail) Created 8 Implemented by Thiti Mahawannakit
+		// @ This took me like 3 hrs to implement lel
 		// calculating available time in the selected slot
-		console.log('[DEBUG-FUNC]: ' + convertClockTimeToMinutesFromStart('8.30', '11.00'));
-		//console.log('[DEBUG-FUNC]: ' + convertClockTimeToMinutesFromStart('9.00', '12.00'));
+		let safe_start_time = false,
+			safe_stop_time = false;
+
+		// Finding safestart
+		let decrement = -1;
+		while (!safe_start_time) {
+			decrement = decrement + 1;
+			const tranversal_started_time = minusHourExactNoAdditionalMinuteRemail(start_time, decrement);
+			const tranversal_boundary = addHourExactNoAdditionalMinuteRemail(tranversal_started_time, 1);
+			// Check if no before subject til the start of the day
+			if (tranversal_started_time <= '08.00') {
+				safe_start_time = '08.00';
+			}
+			_user_assigned_course.every((courseData, index) => {
+				if (day === courseData.day) {
+					// do calc phase
+					if (courseData.end >= tranversal_started_time && courseData.end <= tranversal_boundary) {
+						safe_start_time = courseData.end;
+						return false; //false to stop the loop
+					}
+				}
+				return true; // true to keep going
+			});
+		}
+
+		let increment = -1;
+		while (!safe_stop_time) {
+			increment = increment + 1;
+			const tranversal_started_time = addHourExactNoAdditionalMinuteRemail(safe_start_time, increment);
+			const tranversal_boundary = addHourExactNoAdditionalMinuteRemail(tranversal_started_time, 1);
+			// Check if no subject til the end of the day
+			if (tranversal_started_time >= '18.00') {
+				safe_stop_time = '18.00';
+			}
+			_user_assigned_course.every((courseData, index) => {
+				if (day === courseData.day) {
+					// do calc phase
+					if (courseData.start >= tranversal_started_time && courseData.start <= tranversal_boundary) {
+						safe_stop_time = courseData.start;
+						return false; //false to stop the loop
+					}
+				}
+				return true; // true to keep going
+			});
+		}
+
+		// ─────────────────────────────────────────────────────────────────
+		console.log(safe_start_time);
+		console.log(safe_stop_time);
 	}
 	render() {
 		return (
