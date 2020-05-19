@@ -13,6 +13,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 // ─── UTIL ───────────────────────────────────────────────────────────────────────
 //
 import { isHavingDecimalPlaceThatGreaterThanZero } from '../../../utils/mathHelper';
+import { convertClockTimeToMinutesFromStart } from './helper';
 // ────────────────────────────────────────────────────────────────────────────────
 
 const { Header, Content, Footer } = Layout;
@@ -122,16 +123,12 @@ const Day_Time_Holder = styled.div`
 
 const Day_Time_Inside = styled.div`
 	background-color: lightcoral;
-	width: ${(props) =>
-		`${(!isHavingDecimalPlaceThatGreaterThanZero(props.hour) ? props.hour : props.hour + 0.2) * 60 * 0.148}rem`};
+	width: ${(props) => `${convertClockTimeToMinutesFromStart(props.start, props.end) * 0.148}rem`};
 	height: 3.6rem;
 	line-height: 3.6rem;
 	/* text-align: left; */
 	border-radius: 10rem;
-	margin-left: ${(props) =>
-		`${(!isHavingDecimalPlaceThatGreaterThanZero(props.start - 8) ? props.start - 8 : props.start - 8 + 0.2) *
-			60 *
-			0.148}rem`};
+	margin-left: ${(props) => `${convertClockTimeToMinutesFromStart(props.start) * 0.148}rem`};
 
 	user-select: none;
 	position: absolute;
@@ -209,29 +206,36 @@ const _user_assigned_course = [
 		courseID: 'LNG220',
 		courseName: 'Academic English',
 		day: 1, // 1 == Monday
-		start: 8.3, // 8.30 AM
-		duration: 3 // 3 hours
+		start: '8.30', // 8.30 AM
+		end: '11.00'
 	},
 	{
 		courseID: 'GEN111',
 		courseName: 'Man and Ethics of Living',
 		day: 1, // 1 == Monday
-		start: 13.3, // 13.30 PM
-		duration: 3 // 3 hours
+		start: '13.30', // 13.30 PM
+		end: '16.30'
 	},
 	{
 		courseID: 'CSS112',
 		courseName: 'Computer Programming I	',
 		day: 3, // 3 == Wednesday
-		start: 9,
-		duration: 3
+		start: '9.00',
+		end: '12.00'
 	},
 	{
-		courseID: 'CSS 322',
+		courseID: 'CSS322',
 		courseName: 'System Analysis and Design	',
 		day: 4, // 4 == Thursday
-		start: 10.3,
-		duration: 1.3
+		start: '10.00',
+		end: '11.30'
+	},
+	{
+		courseID: 'AWK101',
+		courseName: 'Learn how to be like thiti	',
+		day: 6, // 4 == Thursday
+		start: '9.00',
+		end: '14.20'
 	}
 ];
 // ────────────────────────────────────────────────────────────────────────────────
@@ -246,6 +250,10 @@ export default class Schedule extends Component {
 	}
 	onSelectTimelineInSchedule(day, start_time) {
 		console.log('[DEBUG]: day = ' + day + ', start_time = ' + start_time);
+
+		// calculating available time in the selected slot
+		console.log('[DEBUG-FUNC]: ' + convertClockTimeToMinutesFromStart('8.30', '11.00'));
+		//console.log('[DEBUG-FUNC]: ' + convertClockTimeToMinutesFromStart('9.00', '12.00'));
 	}
 	render() {
 		return (
@@ -306,6 +314,7 @@ export default class Schedule extends Component {
 																		<Day_Time_Inside
 																			hour={courseData.duration}
 																			start={courseData.start}
+																			end={courseData.end}
 																		>
 																			<Day_Time_Course_Name>
 																				{courseData.courseID +
@@ -343,6 +352,7 @@ export default class Schedule extends Component {
 																		<Day_Time_Inside
 																			hour={courseData.duration}
 																			start={courseData.start}
+																			end={courseData.end}
 																		>
 																			<Day_Time_Course_Name>
 																				{courseData.courseID +
@@ -380,6 +390,7 @@ export default class Schedule extends Component {
 																		<Day_Time_Inside
 																			hour={courseData.duration}
 																			start={courseData.start}
+																			end={courseData.end}
 																		>
 																			<Day_Time_Course_Name>
 																				{courseData.courseID +
@@ -417,6 +428,7 @@ export default class Schedule extends Component {
 																		<Day_Time_Inside
 																			hour={courseData.duration}
 																			start={courseData.start}
+																			end={courseData.end}
 																		>
 																			<Day_Time_Course_Name>
 																				{courseData.courseID +
@@ -454,6 +466,7 @@ export default class Schedule extends Component {
 																		<Day_Time_Inside
 																			hour={courseData.duration}
 																			start={courseData.start}
+																			end={courseData.end}
 																		>
 																			<Day_Time_Course_Name>
 																				{courseData.courseID +
@@ -491,6 +504,7 @@ export default class Schedule extends Component {
 																		<Day_Time_Inside
 																			hour={courseData.duration}
 																			start={courseData.start}
+																			end={courseData.end}
 																		>
 																			<Day_Time_Course_Name>
 																				{courseData.courseID +
@@ -528,6 +542,7 @@ export default class Schedule extends Component {
 																		<Day_Time_Inside
 																			hour={courseData.duration}
 																			start={courseData.start}
+																			end={courseData.end}
 																		>
 																			<Day_Time_Course_Name>
 																				{courseData.courseID +
