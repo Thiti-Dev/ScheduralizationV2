@@ -15,8 +15,8 @@ import styled, { createGlobalStyle } from 'styled-components';
 import { isHavingDecimalPlaceThatGreaterThanZero } from '../../../utils/mathHelper';
 import {
 	convertClockTimeToMinutesFromStart,
-	addHourExactNoAdditionalMinuteRemail,
-	minusHourExactNoAdditionalMinuteRemail
+	addHourExactNoAdditionalMinuteRemain,
+	minusHourExactNoAdditionalMinuteRemain
 } from './helper';
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -259,7 +259,7 @@ export default class Schedule extends Component {
 		// ─── TIME SLOT AVAILABLE CALCULATION ─────────────────────────────
 		//
 		// @ Iterating over the courses data by using every instead of forEach (Performance increment [ The iteration can be stopped ])
-		// @ REQUIRE 2 - CUSTOM MADE UTIL (minusHourExactNoAdditionalMinuteRemail,addHourExactNoAdditionalMinuteRemail) Created 8 Implemented by Thiti Mahawannakit
+		// @ REQUIRE 2 - CUSTOM MADE UTIL (minusHourExactNoAdditionalMinuteRemain,addHourExactNoAdditionalMinuteRemain) Created 8 Implemented by Thiti Mahawannakit
 		// @ This took me like 3 hrs to implement lel
 		// calculating available time in the selected slot
 		let safe_start_time = false,
@@ -269,8 +269,8 @@ export default class Schedule extends Component {
 		let decrement = -1;
 		while (!safe_start_time) {
 			decrement = decrement + 1;
-			const tranversal_started_time = minusHourExactNoAdditionalMinuteRemail(start_time, decrement);
-			const tranversal_boundary = addHourExactNoAdditionalMinuteRemail(tranversal_started_time, 1);
+			const tranversal_started_time = minusHourExactNoAdditionalMinuteRemain(start_time, decrement);
+			const tranversal_boundary = addHourExactNoAdditionalMinuteRemain(tranversal_started_time, 1);
 			// Check if no before subject til the start of the day
 			if (tranversal_started_time <= '08.00') {
 				safe_start_time = '08.00';
@@ -290,8 +290,8 @@ export default class Schedule extends Component {
 		let increment = -1;
 		while (!safe_stop_time) {
 			increment = increment + 1;
-			const tranversal_started_time = addHourExactNoAdditionalMinuteRemail(safe_start_time, increment);
-			const tranversal_boundary = addHourExactNoAdditionalMinuteRemail(tranversal_started_time, 1);
+			const tranversal_started_time = addHourExactNoAdditionalMinuteRemain(safe_start_time, increment);
+			const tranversal_boundary = addHourExactNoAdditionalMinuteRemain(tranversal_started_time, 1);
 			// Check if no subject til the end of the day
 			if (tranversal_started_time >= '18.00') {
 				safe_stop_time = '18.00';

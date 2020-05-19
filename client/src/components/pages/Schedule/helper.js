@@ -31,7 +31,7 @@ export function convertClockTimeToMinutesFromStart(raw_time, _start_from = start
 	return Math.abs(_raw_time * 60 + addition_minute_value_needed - additional_from_custom_start_from); // minutes form
 }
 
-export function minusHourExactNoAdditionalMinuteRemail(_time, _hour) {
+export function minusHourExactNoAdditionalMinuteRemain(_time, _hour) {
 	const _calculatable_time = parseInt(_time) - _hour;
 	let finalized_time;
 	if (_calculatable_time < 10) {
@@ -41,7 +41,7 @@ export function minusHourExactNoAdditionalMinuteRemail(_time, _hour) {
 	}
 	return finalized_time;
 }
-export function addHourExactNoAdditionalMinuteRemail(_time, _hour) {
+export function addHourExactNoAdditionalMinuteRemain(_time, _hour) {
 	const _calculatable_time = parseInt(_time) + _hour;
 	let finalized_time;
 	if (_calculatable_time < 10) {
