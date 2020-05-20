@@ -20,7 +20,15 @@ module.exports = (sequelize, DataTypes) => {
 		{}
 	);
 	Course.associate = function(models) {
-		// associations can be defined here
+		//associations can be defined here
+		Course.hasMany(models.CourseAvailable, {
+			foreignKey: {
+				name: 'courseID',
+				allowNull: false
+			},
+			sourceKey: 'courseID',
+			as: 'courseAvailable'
+		});
 	};
 	return Course;
 };
