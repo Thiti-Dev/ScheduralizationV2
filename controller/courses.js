@@ -5,6 +5,37 @@ const ErrorResponse = require('../utils/errorResponse');
 const { User, CourseAvailable, Course, sequelize } = require('../models');
 const { Op } = require('sequelize');
 
+//
+// ─── UTILS FUNCTION ─────────────────────────────────────────────────────────────
+//
+async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end) {
+	const courses = await CourseAvailable.findAll({
+		where: {
+			courseID,
+			section,
+			start: {
+				[Op.ne]: start
+			},
+			end: {
+				[Op.ne]: end
+			}
+		},
+		include: [
+			{
+				model: Course,
+				as: 'courseData'
+			}
+		]
+	});
+	let result = false; // Initialize as false
+	if (courses.length > 0) {
+		result = courses;
+	}
+
+	return result;
+}
+// ────────────────────────────────────────────────────────────────────────────────
+
 // @desc    Get the available courses from the given timeslot (also semester => allowedGroup)
 // @route   GET /api/courses/getavailablebetweentime/:start/:end/:semester/:allowedGroup
 // @acess   Public
