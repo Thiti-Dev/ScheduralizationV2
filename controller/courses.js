@@ -37,14 +37,16 @@ async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end
 // ────────────────────────────────────────────────────────────────────────────────
 
 // @desc    Get the available courses from the given timeslot (also semester => allowedGroup)
-// @route   GET /api/courses/getavailablebetweentime/:start/:end/:semester/:allowedGroup
+// @route   GET /api/courses/getavailablebetweentime?start=10.30&end=12.30&semester=2&allowedGroup=CSS
 // @acess   Public
 exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) => {
-	const { start, end, semester, allowedGroup } = req.params;
+	const { start, end, semester, allowedGroup } = req.query;
 
-	if (!start || !end || !semester) {
+	if (!start || !end || !semester || !allowedGroup) {
 		return next(
-			new ErrorResponse(`Invalid params, must have had start,end,semester,allowedGroup with the type of string`)
+			new ErrorResponse(
+				`Invalid params, must have had start,end,semester,allowedGroup with the type of string as a query string`
+			)
 		);
 	}
 

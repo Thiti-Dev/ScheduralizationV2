@@ -5,6 +5,6 @@ const { getAvailableCourseBetweenTimeSlot, getSpecificCourseWithConsequence } = 
 
 const { protect } = require('../../middleware/auth');
 
-router.route('/getavailablebetweentime/:start/:end/:semester/:allowedGroup').get(getAvailableCourseBetweenTimeSlot);
+router.route('/getavailablebetweentime').get(getAvailableCourseBetweenTimeSlot);
 router.route('/getSpecificCourseWithConsequence/:courseID').get(getSpecificCourseWithConsequence);
 module.exports = router;
