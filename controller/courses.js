@@ -70,3 +70,21 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 	});
 	res.status(200).json({ success: true, data: course });
 });
+
+// @desc    Get the consequence of the specific course
+// @route   GET /api/courses/getSpecificCourseWithConsequence/:courseID?section=1&start=10.30&stop=12.30
+// @acess   Public
+exports.getSpecificCourseWithConsequence = asyncHandler(async (req, res, next) => {
+	const { courseID } = req.params;
+	const { section, start, stop } = req.query;
+
+	if (!courseID || !section || !start || !stop) {
+		return next(
+			new ErrorResponse(
+				`Invalid params, must have had section,start,stop with the type of string as a request query`
+			)
+		);
+	}
+	const conflicted_data = await checkIfCourseHavingConsequenceOrNot(courseID, section, start, stop);
+	res.status(200).json({ success: true, data: conflicted_data });
+});
