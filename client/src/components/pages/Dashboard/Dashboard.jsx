@@ -36,12 +36,18 @@ const GlobalStyle = createGlobalStyle`
 // ─── CUSTOM STYLING ─────────────────────────────────────────────────────────────
 //
 
-const Outer_Holder = styled.div`padding: 3rem 5rem;`;
+const Outer_Holder = styled.div`
+	padding: 3rem 5rem;
+	@media (max-width: 1430px) {
+		/* small screen ignore centering adjust */
+		width: 1430px;
+	}
+`;
 
 const Action_Card_Holder = styled.div`
 	padding: 3rem 3rem;
-	display: flex;
-	flex-wrap: wrap;
+	/* display: flex;
+	flex-wrap: wrap; */
 `;
 
 const Card_Action = styled.div`
