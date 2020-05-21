@@ -20,6 +20,7 @@ import Home from './components/pages/Home';
 import ConfirmEmail from './components/pages/ConfirmEmail';
 import Dashboard from './components/pages/Dashboard';
 import Schedule from './components/pages/Schedule';
+import Courses from './components/pages/Courses';
 // ────────────────────────────────────────────────────────────────────────────────
 
 //
@@ -75,6 +76,7 @@ export default class App extends Component {
 						<Route exact path="/home" component={Home} />
 						<Route exact path="/waitingforconfirmation" component={ConfirmEmail} />
 						<PrivateRoute exact path="/dashboard" component={Dashboard} />
+						<PrivateRoute exact path="/courses" component={Courses} />
 						<PrivateRoute exact path="/schedule" component={Schedule} />
 					</Switch>
 				</Router>
