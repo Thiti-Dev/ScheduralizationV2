@@ -6,6 +6,7 @@ import { inject, observer } from 'mobx-react';
 import schedule_img from './images/schedule.png';
 import profile_img from './images/profile.png';
 import course_img from './images/course.png';
+import courses_img from './images/courses.png';
 import course_feedback_img from './images/course-feedback.png';
 import find_img from './images/find.png';
 // ────────────────────────────────────────────────────────────────────────────────
@@ -36,12 +37,18 @@ const GlobalStyle = createGlobalStyle`
 // ─── CUSTOM STYLING ─────────────────────────────────────────────────────────────
 //
 
-const Outer_Holder = styled.div`padding: 3rem 5rem;`;
+const Outer_Holder = styled.div`
+	padding: 3rem 5rem;
+	@media (max-width: 1430px) {
+		/* small screen ignore centering adjust */
+		width: 1430px;
+	}
+`;
 
 const Action_Card_Holder = styled.div`
 	padding: 3rem 3rem;
-	display: flex;
-	flex-wrap: wrap;
+	/* display: flex;
+	flex-wrap: wrap; */
 `;
 
 const Card_Action = styled.div`
@@ -107,6 +114,16 @@ const Dashboard = inject('rootStore')(
 								avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
 							/>
 							<Action_Card_Holder>
+								<Card_Action
+									className="hvr-grow"
+									onClick={() => {
+										this.props.history.push('courses');
+										instantProcess();
+									}}
+								>
+									<Card_Action_Image img={courses_img} />
+									<Card_Action_Text>View all available courses</Card_Action_Text>
+								</Card_Action>
 								<Card_Action
 									className="hvr-grow"
 									onClick={() => {
