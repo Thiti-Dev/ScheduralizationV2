@@ -167,6 +167,22 @@ const Day_Time_Course_Name = styled.p`
 		background: #555;
 	}
 `;
+
+const Schedule_Holder = styled.div`
+	@media (min-width: 992px) {
+		/* small screen ignore centering adjust */
+	}
+	@media (min-width: 1600px) {
+		position: absolute;
+		left: 50%;
+		transform: translate(-50%, 0);
+
+		@media (min-height: 1000px) {
+			/* small screen ignore centering adjust */
+			margin-top: 5rem;
+		}
+	}
+`;
 // ────────────────────────────────────────────────────────────────────────────────
 
 const Breadcrumb_Render = ({ history }) => (
@@ -332,306 +348,322 @@ export default class Schedule extends Component {
 						]}
 						avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
 					>
-						<Custom_Top_Table>
-							<thead>
-								<tr>
-									<Custom_Main_Th>My schedule</Custom_Main_Th>
-								</tr>
-							</thead>
-						</Custom_Top_Table>
-						<Custom_Table>
-							<thead>
-								<tr>
-									<Custom_Th>Day</Custom_Th>
-									<Custom_Th>08.00 AM</Custom_Th>
-									<Custom_Th>09.00 AM</Custom_Th>
-									<Custom_Th>10.00 AM</Custom_Th>
-									<Custom_Th>11.00 AM</Custom_Th>
-									<Custom_Th>12.00 PM</Custom_Th>
-									<Custom_Th>1.00 PM</Custom_Th>
-									<Custom_Th>2.00 PM</Custom_Th>
-									<Custom_Th>3.00 PM</Custom_Th>
-									<Custom_Th>4.00 PM</Custom_Th>
-									<Custom_Th>5.00 PM</Custom_Th>
-									<Custom_Th>6.00 PM</Custom_Th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<Custom_Day_Td>Monday</Custom_Day_Td>
-									{normal_time_slot.map((value, index) => {
-										if (index === 0) {
-											return (
-												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(1, value[1])}>
-													<Day_Time_Holder>
-														{_user_assigned_course.map((courseData) => {
-															if (courseData.day === 1) {
-																return (
-																	<React.Fragment>
-																		<Day_Time_Inside
-																			hour={courseData.duration}
-																			start={courseData.start}
-																			end={courseData.end}
-																		>
-																			<Day_Time_Course_Name>
-																				{courseData.courseID +
-																					' ' +
-																					courseData.courseName}
-																			</Day_Time_Course_Name>
-																		</Day_Time_Inside>
-																	</React.Fragment>
-																);
-															}
-														})}
-													</Day_Time_Holder>
-												</Custom_Td>
-											);
-										} else {
-											return (
-												<Custom_Td
-													onClick={() => this.onSelectTimelineInSchedule(1, value[1])}
-												/>
-											);
-										}
-									})}
-								</tr>
-								<tr>
-									<Custom_Day_Td>Tuesday</Custom_Day_Td>
-									{normal_time_slot.map((value, index) => {
-										if (index === 0) {
-											return (
-												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(2, value[1])}>
-													<Day_Time_Holder>
-														{_user_assigned_course.map((courseData) => {
-															if (courseData.day === 2) {
-																return (
-																	<React.Fragment>
-																		<Day_Time_Inside
-																			hour={courseData.duration}
-																			start={courseData.start}
-																			end={courseData.end}
-																		>
-																			<Day_Time_Course_Name>
-																				{courseData.courseID +
-																					' ' +
-																					courseData.courseName}
-																			</Day_Time_Course_Name>
-																		</Day_Time_Inside>
-																	</React.Fragment>
-																);
-															}
-														})}
-													</Day_Time_Holder>
-												</Custom_Td>
-											);
-										} else {
-											return (
-												<Custom_Td
-													onClick={() => this.onSelectTimelineInSchedule(2, value[1])}
-												/>
-											);
-										}
-									})}
-								</tr>
-								<tr>
-									<Custom_Day_Td>Wednesday</Custom_Day_Td>
-									{normal_time_slot.map((value, index) => {
-										if (index === 0) {
-											return (
-												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(3, value[1])}>
-													<Day_Time_Holder>
-														{_user_assigned_course.map((courseData) => {
-															if (courseData.day === 3) {
-																return (
-																	<React.Fragment>
-																		<Day_Time_Inside
-																			hour={courseData.duration}
-																			start={courseData.start}
-																			end={courseData.end}
-																		>
-																			<Day_Time_Course_Name>
-																				{courseData.courseID +
-																					' ' +
-																					courseData.courseName}
-																			</Day_Time_Course_Name>
-																		</Day_Time_Inside>
-																	</React.Fragment>
-																);
-															}
-														})}
-													</Day_Time_Holder>
-												</Custom_Td>
-											);
-										} else {
-											return (
-												<Custom_Td
-													onClick={() => this.onSelectTimelineInSchedule(3, value[1])}
-												/>
-											);
-										}
-									})}
-								</tr>
-								<tr>
-									<Custom_Day_Td>Thursday</Custom_Day_Td>
-									{normal_time_slot.map((value, index) => {
-										if (index === 0) {
-											return (
-												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(4, value[1])}>
-													<Day_Time_Holder>
-														{_user_assigned_course.map((courseData) => {
-															if (courseData.day === 4) {
-																return (
-																	<React.Fragment>
-																		<Day_Time_Inside
-																			hour={courseData.duration}
-																			start={courseData.start}
-																			end={courseData.end}
-																		>
-																			<Day_Time_Course_Name>
-																				{courseData.courseID +
-																					' ' +
-																					courseData.courseName}
-																			</Day_Time_Course_Name>
-																		</Day_Time_Inside>
-																	</React.Fragment>
-																);
-															}
-														})}
-													</Day_Time_Holder>
-												</Custom_Td>
-											);
-										} else {
-											return (
-												<Custom_Td
-													onClick={() => this.onSelectTimelineInSchedule(4, value[1])}
-												/>
-											);
-										}
-									})}
-								</tr>
-								<tr>
-									<Custom_Day_Td>Friday</Custom_Day_Td>
-									{normal_time_slot.map((value, index) => {
-										if (index === 0) {
-											return (
-												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(5, value[1])}>
-													<Day_Time_Holder>
-														{_user_assigned_course.map((courseData) => {
-															if (courseData.day === 5) {
-																return (
-																	<React.Fragment>
-																		<Day_Time_Inside
-																			hour={courseData.duration}
-																			start={courseData.start}
-																			end={courseData.end}
-																		>
-																			<Day_Time_Course_Name>
-																				{courseData.courseID +
-																					' ' +
-																					courseData.courseName}
-																			</Day_Time_Course_Name>
-																		</Day_Time_Inside>
-																	</React.Fragment>
-																);
-															}
-														})}
-													</Day_Time_Holder>
-												</Custom_Td>
-											);
-										} else {
-											return (
-												<Custom_Td
-													onClick={() => this.onSelectTimelineInSchedule(5, value[1])}
-												/>
-											);
-										}
-									})}
-								</tr>
-								<tr>
-									<Custom_Day_Td>Saturday</Custom_Day_Td>
-									{normal_time_slot.map((value, index) => {
-										if (index === 0) {
-											return (
-												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(6, value[1])}>
-													<Day_Time_Holder>
-														{_user_assigned_course.map((courseData) => {
-															if (courseData.day === 6) {
-																return (
-																	<React.Fragment>
-																		<Day_Time_Inside
-																			hour={courseData.duration}
-																			start={courseData.start}
-																			end={courseData.end}
-																		>
-																			<Day_Time_Course_Name>
-																				{courseData.courseID +
-																					' ' +
-																					courseData.courseName}
-																			</Day_Time_Course_Name>
-																		</Day_Time_Inside>
-																	</React.Fragment>
-																);
-															}
-														})}
-													</Day_Time_Holder>
-												</Custom_Td>
-											);
-										} else {
-											return (
-												<Custom_Td
-													onClick={() => this.onSelectTimelineInSchedule(6, value[1])}
-												/>
-											);
-										}
-									})}
-								</tr>
-								<tr>
-									<Custom_Day_Td>Sunday</Custom_Day_Td>
-									{normal_time_slot.map((value, index) => {
-										if (index === 0) {
-											return (
-												<Custom_Td onClick={() => this.onSelectTimelineInSchedule(7, value[1])}>
-													<Day_Time_Holder>
-														{_user_assigned_course.map((courseData) => {
-															if (courseData.day === 7) {
-																return (
-																	<React.Fragment>
-																		<Day_Time_Inside
-																			hour={courseData.duration}
-																			start={courseData.start}
-																			end={courseData.end}
-																		>
-																			<Day_Time_Course_Name>
-																				{courseData.courseID +
-																					' ' +
-																					courseData.courseName}
-																			</Day_Time_Course_Name>
-																		</Day_Time_Inside>
-																	</React.Fragment>
-																);
-															}
-														})}
-													</Day_Time_Holder>
-												</Custom_Td>
-											);
-										} else {
-											return (
-												<Custom_Td
-													onClick={() => this.onSelectTimelineInSchedule(7, value[1])}
-												/>
-											);
-										}
-									})}
-								</tr>
-							</tbody>
-						</Custom_Table>
-						<Custom_Bottom_Table>
-							<thead>
-								<tr>
-									<Custom_Main_Th>Ⓒ Copyright by SchedularizationV2</Custom_Main_Th>
-								</tr>
-							</thead>
-						</Custom_Bottom_Table>
+						<Schedule_Holder>
+							<Custom_Top_Table>
+								<thead>
+									<tr>
+										<Custom_Main_Th>My schedule</Custom_Main_Th>
+									</tr>
+								</thead>
+							</Custom_Top_Table>
+							<Custom_Table>
+								<thead>
+									<tr>
+										<Custom_Th>Day</Custom_Th>
+										<Custom_Th>08.00 AM</Custom_Th>
+										<Custom_Th>09.00 AM</Custom_Th>
+										<Custom_Th>10.00 AM</Custom_Th>
+										<Custom_Th>11.00 AM</Custom_Th>
+										<Custom_Th>12.00 PM</Custom_Th>
+										<Custom_Th>1.00 PM</Custom_Th>
+										<Custom_Th>2.00 PM</Custom_Th>
+										<Custom_Th>3.00 PM</Custom_Th>
+										<Custom_Th>4.00 PM</Custom_Th>
+										<Custom_Th>5.00 PM</Custom_Th>
+										<Custom_Th>6.00 PM</Custom_Th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<Custom_Day_Td>Monday</Custom_Day_Td>
+										{normal_time_slot.map((value, index) => {
+											if (index === 0) {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(1, value[1])}
+													>
+														<Day_Time_Holder>
+															{_user_assigned_course.map((courseData) => {
+																if (courseData.day === 1) {
+																	return (
+																		<React.Fragment>
+																			<Day_Time_Inside
+																				hour={courseData.duration}
+																				start={courseData.start}
+																				end={courseData.end}
+																			>
+																				<Day_Time_Course_Name>
+																					{courseData.courseID +
+																						' ' +
+																						courseData.courseName}
+																				</Day_Time_Course_Name>
+																			</Day_Time_Inside>
+																		</React.Fragment>
+																	);
+																}
+															})}
+														</Day_Time_Holder>
+													</Custom_Td>
+												);
+											} else {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(1, value[1])}
+													/>
+												);
+											}
+										})}
+									</tr>
+									<tr>
+										<Custom_Day_Td>Tuesday</Custom_Day_Td>
+										{normal_time_slot.map((value, index) => {
+											if (index === 0) {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(2, value[1])}
+													>
+														<Day_Time_Holder>
+															{_user_assigned_course.map((courseData) => {
+																if (courseData.day === 2) {
+																	return (
+																		<React.Fragment>
+																			<Day_Time_Inside
+																				hour={courseData.duration}
+																				start={courseData.start}
+																				end={courseData.end}
+																			>
+																				<Day_Time_Course_Name>
+																					{courseData.courseID +
+																						' ' +
+																						courseData.courseName}
+																				</Day_Time_Course_Name>
+																			</Day_Time_Inside>
+																		</React.Fragment>
+																	);
+																}
+															})}
+														</Day_Time_Holder>
+													</Custom_Td>
+												);
+											} else {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(2, value[1])}
+													/>
+												);
+											}
+										})}
+									</tr>
+									<tr>
+										<Custom_Day_Td>Wednesday</Custom_Day_Td>
+										{normal_time_slot.map((value, index) => {
+											if (index === 0) {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(3, value[1])}
+													>
+														<Day_Time_Holder>
+															{_user_assigned_course.map((courseData) => {
+																if (courseData.day === 3) {
+																	return (
+																		<React.Fragment>
+																			<Day_Time_Inside
+																				hour={courseData.duration}
+																				start={courseData.start}
+																				end={courseData.end}
+																			>
+																				<Day_Time_Course_Name>
+																					{courseData.courseID +
+																						' ' +
+																						courseData.courseName}
+																				</Day_Time_Course_Name>
+																			</Day_Time_Inside>
+																		</React.Fragment>
+																	);
+																}
+															})}
+														</Day_Time_Holder>
+													</Custom_Td>
+												);
+											} else {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(3, value[1])}
+													/>
+												);
+											}
+										})}
+									</tr>
+									<tr>
+										<Custom_Day_Td>Thursday</Custom_Day_Td>
+										{normal_time_slot.map((value, index) => {
+											if (index === 0) {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(4, value[1])}
+													>
+														<Day_Time_Holder>
+															{_user_assigned_course.map((courseData) => {
+																if (courseData.day === 4) {
+																	return (
+																		<React.Fragment>
+																			<Day_Time_Inside
+																				hour={courseData.duration}
+																				start={courseData.start}
+																				end={courseData.end}
+																			>
+																				<Day_Time_Course_Name>
+																					{courseData.courseID +
+																						' ' +
+																						courseData.courseName}
+																				</Day_Time_Course_Name>
+																			</Day_Time_Inside>
+																		</React.Fragment>
+																	);
+																}
+															})}
+														</Day_Time_Holder>
+													</Custom_Td>
+												);
+											} else {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(4, value[1])}
+													/>
+												);
+											}
+										})}
+									</tr>
+									<tr>
+										<Custom_Day_Td>Friday</Custom_Day_Td>
+										{normal_time_slot.map((value, index) => {
+											if (index === 0) {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(5, value[1])}
+													>
+														<Day_Time_Holder>
+															{_user_assigned_course.map((courseData) => {
+																if (courseData.day === 5) {
+																	return (
+																		<React.Fragment>
+																			<Day_Time_Inside
+																				hour={courseData.duration}
+																				start={courseData.start}
+																				end={courseData.end}
+																			>
+																				<Day_Time_Course_Name>
+																					{courseData.courseID +
+																						' ' +
+																						courseData.courseName}
+																				</Day_Time_Course_Name>
+																			</Day_Time_Inside>
+																		</React.Fragment>
+																	);
+																}
+															})}
+														</Day_Time_Holder>
+													</Custom_Td>
+												);
+											} else {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(5, value[1])}
+													/>
+												);
+											}
+										})}
+									</tr>
+									<tr>
+										<Custom_Day_Td>Saturday</Custom_Day_Td>
+										{normal_time_slot.map((value, index) => {
+											if (index === 0) {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(6, value[1])}
+													>
+														<Day_Time_Holder>
+															{_user_assigned_course.map((courseData) => {
+																if (courseData.day === 6) {
+																	return (
+																		<React.Fragment>
+																			<Day_Time_Inside
+																				hour={courseData.duration}
+																				start={courseData.start}
+																				end={courseData.end}
+																			>
+																				<Day_Time_Course_Name>
+																					{courseData.courseID +
+																						' ' +
+																						courseData.courseName}
+																				</Day_Time_Course_Name>
+																			</Day_Time_Inside>
+																		</React.Fragment>
+																	);
+																}
+															})}
+														</Day_Time_Holder>
+													</Custom_Td>
+												);
+											} else {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(6, value[1])}
+													/>
+												);
+											}
+										})}
+									</tr>
+									<tr>
+										<Custom_Day_Td>Sunday</Custom_Day_Td>
+										{normal_time_slot.map((value, index) => {
+											if (index === 0) {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(7, value[1])}
+													>
+														<Day_Time_Holder>
+															{_user_assigned_course.map((courseData) => {
+																if (courseData.day === 7) {
+																	return (
+																		<React.Fragment>
+																			<Day_Time_Inside
+																				hour={courseData.duration}
+																				start={courseData.start}
+																				end={courseData.end}
+																			>
+																				<Day_Time_Course_Name>
+																					{courseData.courseID +
+																						' ' +
+																						courseData.courseName}
+																				</Day_Time_Course_Name>
+																			</Day_Time_Inside>
+																		</React.Fragment>
+																	);
+																}
+															})}
+														</Day_Time_Holder>
+													</Custom_Td>
+												);
+											} else {
+												return (
+													<Custom_Td
+														onClick={() => this.onSelectTimelineInSchedule(7, value[1])}
+													/>
+												);
+											}
+										})}
+									</tr>
+								</tbody>
+							</Custom_Table>
+							<Custom_Bottom_Table>
+								<thead>
+									<tr>
+										<Custom_Main_Th>Ⓒ Copyright by SchedularizationV2</Custom_Main_Th>
+									</tr>
+								</thead>
+							</Custom_Bottom_Table>
+						</Schedule_Holder>
 					</PageHeader>
 				</Outer_Holder>
 			</React.Fragment>
