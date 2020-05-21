@@ -112,18 +112,45 @@ export default class CoursesList extends Component {
 					[ 'start', 'end', 'day' ],
 					'section'
 				);
-				const categorized_available = categorizedArrayOfObject(finalized_available, 'section');
-				const rendered_available = [];
+				const categorized_available = categorizedArrayOfObject(finalized_available, 'section'); //adjust  category by section
+				const rendered_available_1 = [], // for renderer
+					rendered_available_2 = [], // for renderer
+					categorized_available_1 = {}, // for semester categorized
+					categorized_available_2 = {}; // for semester categorized
+
+				//
+				// SEPARATE THE CATEGORIZED DATA BY SEMESTER AGAIN
+				//
+
+				for (let [ key, value ] of Object.entries(categorized_available)) {
+					// select only semester 1
+					const _semester_1_available = value.filter((data) => {
+						return data.semester === 1;
+					});
+
+					const _semester_2_available = value.filter((data) => {
+						return data.semester === 2;
+					});
+
+					if (_semester_1_available.length > 0) {
+						categorized_available_1[key] = _semester_1_available;
+					}
+					if (_semester_2_available.length > 0) {
+						categorized_available_2[key] = _semester_2_available;
+					}
+				}
+
+				// • • • • •
 
 				// Auto increment for prefix the key id
 				let panel_autoincrement = 0;
 				//
-				for (let [ key, value ] of Object.entries(categorized_available)) {
+				for (let [ key, value ] of Object.entries(categorized_available_1)) {
 					panel_autoincrement = panel_autoincrement + 1;
-					rendered_available.push(
+					rendered_available_1.push(
 						<Panel
 							header={`Section ${key}`}
-							key={`${courseData.courseID}-${panel_autoincrement}`}
+							key={`semester-1-${courseData.courseID}-${panel_autoincrement}`}
 							className="site-collapse-custom-panel"
 						>
 							<List
@@ -134,8 +161,32 @@ export default class CoursesList extends Component {
 								dataSource={value}
 								renderItem={(item) => (
 									<List.Item>
-										ภาคการศึกษาที่ {item.semester} วัน {day_abbreviation_extract[item.day]}{' '}
-										เริ่มเรียน {item.start} เลิก {item.end} ห้อง {item.classroom}
+										วัน {day_abbreviation_extract[item.day]} เริ่มเรียน {item.start} เลิก {item.end}{' '}
+										ห้อง {item.classroom}
+									</List.Item>
+								)}
+							/>
+						</Panel>
+					);
+				}
+				for (let [ key, value ] of Object.entries(categorized_available_2)) {
+					panel_autoincrement = panel_autoincrement + 1;
+					rendered_available_2.push(
+						<Panel
+							header={`Section ${key}`}
+							key={`semester-2-${courseData.courseID}-${panel_autoincrement}`}
+							className="site-collapse-custom-panel"
+						>
+							<List
+								size="small"
+								// header={<div>Availability</div>}
+								// footer={<div>Footer</div>}
+								bordered
+								dataSource={value}
+								renderItem={(item) => (
+									<List.Item>
+										วัน {day_abbreviation_extract[item.day]} เริ่มเรียน {item.start} เลิก {item.end}{' '}
+										ห้อง {item.classroom}
 									</List.Item>
 								)}
 							/>
@@ -160,7 +211,38 @@ export default class CoursesList extends Component {
 							expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
 							className="site-collapse-custom-collapse"
 						>
-							{rendered_available}
+							{rendered_available_1.length > 0 ? (
+								<Panel
+									header={`ภาคการศึกษาที่ 1`}
+									key={`semester-1-${index}`}
+									className="site-collapse-custom-panel"
+								>
+									<Collapse
+										bordered={false}
+										// defaultActiveKey={[ '1' ]}
+										expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+										className="site-collapse-custom-collapse"
+									>
+										{rendered_available_1}
+									</Collapse>
+								</Panel>
+							) : null}
+							{rendered_available_2.length > 0 ? (
+								<Panel
+									header={`ภาคการศึกษาที่ 2`}
+									key={`semester-2-${index}`}
+									className="site-collapse-custom-panel"
+								>
+									<Collapse
+										bordered={false}
+										// defaultActiveKey={[ '1' ]}
+										expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+										className="site-collapse-custom-collapse"
+									>
+										{rendered_available_2}
+									</Collapse>
+								</Panel>
+							) : null}
 						</Collapse>
 					</Panel>
 				);
