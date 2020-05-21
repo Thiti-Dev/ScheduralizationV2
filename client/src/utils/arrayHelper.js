@@ -54,3 +54,14 @@ export function distinctArrayOfObject(_data, _distinct_key, based_key) {
 	});
 	return filtered_data;
 }
+
+export function categorizedArrayOfObject(_data, based_key) {
+	const finalized_data = {};
+	_data.forEach((data, index) => {
+		if (!finalized_data[data.section]) {
+			finalized_data[data.section] = []; // initialize array
+		}
+		finalized_data[data.section].push(data);
+	});
+	return finalized_data;
+}
