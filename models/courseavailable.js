@@ -11,10 +11,6 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.INTEGER,
 				allowNull: false
 			},
-			credit: {
-				type: DataTypes.INTEGER,
-				allowNull: false
-			},
 			totalSeat: {
 				type: DataTypes.INTEGER,
 				allowNull: false

@@ -23,10 +23,6 @@ module.exports = {
 				type: Sequelize.INTEGER,
 				allowNull: false
 			},
-			credit: {
-				type: Sequelize.INTEGER,
-				allowNull: false
-			},
 			totalSeat: {
 				type: Sequelize.INTEGER,
 				allowNull: false
