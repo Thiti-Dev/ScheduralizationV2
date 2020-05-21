@@ -54,7 +54,9 @@ module.exports = (sequelize, DataTypes) => {
 				allowNull: false
 			},
 			targetKey: 'courseID',
-			as: 'courseData'
+			as: 'courseData',
+			onDelete: 'CASCADE',
+			onUpdate: 'CASCADE'
 		});
 	};
 	return CourseAvailable;

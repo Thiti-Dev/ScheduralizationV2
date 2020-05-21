@@ -15,7 +15,9 @@ module.exports = {
 					model: 'Courses',
 					key: 'courseID',
 					as: 'courseID'
-				}
+				},
+				onUpdate: 'CASCADE',
+				onDelete: 'CASCADE'
 			},
 			semester: {
 				type: Sequelize.INTEGER,
