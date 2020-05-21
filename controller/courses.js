@@ -36,6 +36,24 @@ async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end
 }
 // ────────────────────────────────────────────────────────────────────────────────
 
+// @desc    Get all available courses that exist in the database
+// @route   GET /api/courses
+// @acess   Public
+exports.getAllAvailableCourses = asyncHandler(async (req, res, next) => {
+	const courses = await Course.findAll({
+		subQuery: false,
+		order: [ [ 'courseID', 'ASC' ] ],
+		include: [
+			{
+				model: CourseAvailable,
+				as: 'courseAvailable',
+				required: false
+			}
+		]
+	});
+	res.status(200).json({ success: true, data: courses });
+});
+
 // @desc    Get the available courses from the given timeslot (also semester => allowedGroup)
 // @route   GET /api/courses/getavailablebetweentime?start=10.30&end=12.30&semester=2&allowedGroup=CSS
 // @acess   Public
