@@ -78,9 +78,23 @@ module.exports = (sequelize, DataTypes) => {
 	};
 
 	User.prototype.getSignedJwtToken = function() {
-		return jwt.sign({ id: this.id, email: this.username, studentID: this.studentID }, process.env.JWT_SECRET, {
-			expiresIn: process.env.JWT_EXPIRE
-		});
+		return jwt.sign(
+			{
+				id: this.id,
+				email: this.username,
+				studentID: this.studentID,
+				firstName: this.firstName,
+				lastName: this.lastName,
+				year: this.year,
+				semester: this.semester,
+				studentGroup: this.studentGroup,
+				learnedCourses: this.learnedCourses
+			},
+			process.env.JWT_SECRET,
+			{
+				expiresIn: process.env.JWT_EXPIRE
+			}
+		);
 	};
 
 	User.prototype.getConfirmToken = async function() {
