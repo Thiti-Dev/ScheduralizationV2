@@ -32,9 +32,11 @@ app.use(cookieParser());
 
 // Importing route
 const auth = require('./routes/api/auth');
+const users = require('./routes/api/users');
 const courses = require('./routes/api/courses');
 // @Apply route
 app.use('/api/auth', auth);
+app.use('/api/users', users);
 app.use('/api/courses', courses);
 
 // @Error Hander
