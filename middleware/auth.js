@@ -23,6 +23,11 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
 		req.user = await User.findByPk(decoded.id);
 
+		// Checking again if the user_data got removed by somehow before the token expires
+		if (!req.user) {
+			return next(new ErrorResponse('Not authorize to access this route', 401));
+		}
+
 		//console.log(req.user);
 
 		next();
