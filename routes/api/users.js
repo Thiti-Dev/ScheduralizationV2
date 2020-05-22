@@ -4,7 +4,8 @@ const router = express.Router();
 const {
 	getSpecificData,
 	updateStudiedCourses,
-	getStudiedCoursesdDataFromString
+	getStudiedCoursesdDataFromString,
+	initializeNewUser
 } = require('../../controller/users.js');
 
 const { protect } = require('../../middleware/auth');
@@ -12,5 +13,6 @@ const { protect } = require('../../middleware/auth');
 router.route('/getSpecificData').get(protect, getSpecificData);
 router.route('/updateStudiedCourses').put(protect, updateStudiedCourses);
 router.route('/getstudiedcoursesdatafromstring').post(getStudiedCoursesdDataFromString);
+router.route('/initialize').put(protect, initializeNewUser);
 
 module.exports = router;

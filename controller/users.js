@@ -70,3 +70,31 @@ exports.getStudiedCoursesdDataFromString = asyncHandler(async (req, res, next) =
 	});
 	res.status(200).json({ success: true, data: courses });
 });
+
+// @desc    Initialize for the new user (year,semester,studentGroup)
+// @route   PUT /api/users/initialize
+// @acess   Private
+exports.initializeNewUser = asyncHandler(async (req, res, next) => {
+	const { year, semester, studentGroup } = req.body;
+	if (!year || !semester || !studentGroup) {
+		return next(
+			new ErrorResponse(
+				`To be initializing the user, year&semester&studentGroup must be passed into the request body`,
+				400
+			)
+		);
+	}
+	const user = await User.findByPk(req.user.id);
+	if (!user) {
+		return next(new ErrorResponse(`Your account isn't found on the database`, 400));
+	}
+
+	// Updating
+	user.year = year;
+	user.semester = semester;
+	user.studentGroup = studentGroup;
+	await user.save();
+	// ────────────────────────────────────────────────────────────────────────────────
+
+	res.status(200).json({ success: true });
+});
