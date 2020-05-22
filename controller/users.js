@@ -1,6 +1,6 @@
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
-const { User } = require('../models');
+const { User, Course } = require('../models');
 
 // @desc    Get specific data of the current user
 // @route   GET /api/users/getspecificdata?field=learnedCourses,password
@@ -48,4 +48,25 @@ exports.updateStudiedCourses = asyncHandler(async (req, res, next) => {
 	await user_data.save();
 
 	res.status(200).json({ success: true, data: finalized_courses_plain_str });
+});
+
+// @desc    Get joined data of all of the study courses from plain string(separator)
+// @route   POST /api/users/getstudiedcoursesdatafromstring
+// @acess   Public
+exports.getStudiedCoursesdDataFromString = asyncHandler(async (req, res, next) => {
+	const { courses_plain_str } = req.body;
+	if (!courses_plain_str && courses_plain_str !== '') {
+		return next(new ErrorResponse(`Missing request body (courses_plain_str)`, 400));
+	}
+	//
+	// ─── Data(Mess) cleanner
+	//
+	const finalized_courses_plain_array = courses_plain_str.split(',').filter(Boolean);
+	// ────────────────────────────────────────────────────────────────────────────────
+	const courses = await Course.findAll({
+		where: {
+			courseID: finalized_courses_plain_array
+		}
+	});
+	res.status(200).json({ success: true, data: courses });
 });
