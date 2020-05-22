@@ -38,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
 				type: DataTypes.STRING(10),
 				allowNull: true
 			},
+			learnedCourses: {
+				type: DataTypes.TEXT,
+				allowNull: true
+			},
 			confirmEmail: {
 				type: DataTypes.STRING,
 				allowNull: true
