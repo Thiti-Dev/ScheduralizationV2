@@ -2,6 +2,12 @@ const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 const { User, Course } = require('../models');
 
+//
+// ─── UTILS ──────────────────────────────────────────────────────────────────────
+//
+const objectKeyFilter = require('../utils/objectKeyFilter');
+// ────────────────────────────────────────────────────────────────────────────────
+
 // @desc    Get specific data of the current user
 // @route   GET /api/users/getspecificdata?field=learnedCourses,password
 // @acess   Private
@@ -23,6 +29,31 @@ exports.getSpecificData = asyncHandler(async (req, res, next) => {
 	// ────────────────────────────────────────────────────────────────────────────────
 
 	res.status(200).json({ success: true, data: user_data });
+});
+
+// @desc    Update specific data of the current user
+// @route   PATCH /api/users/updatespecificdata
+// @acess   Private
+exports.updateSpecificData = asyncHandler(async (req, res, next) => {
+	const user = await User.findByPk(req.user.id);
+	if (!user) {
+		return next(new ErrorResponse(`Your account isn't found on the database`, 400));
+	}
+	const filtered_updated_data = objectKeyFilter(req.body, [
+		'firstName',
+		'lastName',
+		'studentID',
+		'year',
+		'semester',
+		'studentGroup'
+	]); // Allowed field that can be updated
+	//
+	// ─── UPDATING THE MODEL INSTANCE ────────────────────────────────────────────────
+	//
+	await user.update(filtered_updated_data); // updating
+	// ────────────────────────────────────────────────────────────────────────────────
+
+	res.status(200).json({ success: true });
 });
 
 // @desc    Get specific data of the current user
