@@ -37,7 +37,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 //
 // ─── MOCK ───────────────────────────────────────────────────────────────────────
 //
-//import { dummy } from './_data.json';
+import { dummy } from '../Courses/_data.json';
 // ────────────────────────────────────────────────────────────────────────────────
 
 import CoursesStudied from './CoursesStudied';
@@ -98,6 +98,33 @@ const Custom_Center_X = styled.div`
 	flex-direction: column;
 	overflow-y: auto;
 	height: 80%;
+
+	/* width */
+	::-webkit-scrollbar {
+		width: 10px;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+		background: #f1f1f1;
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		background: #888;
+		border-radius: 20px;
+	}
+
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+		background: #555;
+	}
+`;
+
+const Custom_Center = styled.div`
+	display: flex;
+	justify-content: center;
+	margin-bottom: 2rem;
 `;
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -118,12 +145,42 @@ const Breadcrumb_Render = ({ history }) => (
 export default class CourseInitialization extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			allCoursesData: null,
+			search_str: ''
+		};
 		this.addCourseToStudiedlist = this.addCourseToStudiedlist.bind(this);
+		this.onSearch = this.onSearch.bind(this);
+	}
+	componentDidMount() {
+		if (dummy) {
+			this.setState({ allCoursesData: dummy });
+		}
 	}
 	addCourseToStudiedlist(title) {
 		console.log('[ADD-TO-LIST]: Added ' + title);
 	}
+	onSearch(search_str) {
+		console.log('[SEARCH]: ' + search_str);
+		this.setState({ search_str });
+	}
 	render() {
+		const { allCoursesData, search_str } = this.state;
+		if (!allCoursesData) return null;
+		let filtered_courseData;
+		if (search_str) {
+			let _search_str = search_str.toLowerCase();
+			filtered_courseData = allCoursesData.filter((data) => {
+				let _courseID = data.courseID.toLowerCase();
+				let _courseName = data.courseName.toLowerCase();
+				if (_courseID.includes(_search_str) || _courseName.includes(_search_str)) {
+					return true;
+				}
+				return false;
+			});
+		} else {
+			filtered_courseData = allCoursesData;
+		}
 		return (
 			<React.Fragment>
 				<DndProvider backend={Backend}>
@@ -155,12 +212,23 @@ export default class CourseInitialization extends Component {
 									<Custom_Description_Header>
 										Courses that haven't been studied
 									</Custom_Description_Header>
-
-									<Custom_Center_X>
-										<CoursesList
-											on_drag={this.addCourseToStudiedlist}
-											title="CSS224 Working Around"
+									<Custom_Center>
+										<Search
+											size="large"
+											placeholder="คีย์เวิร์ดที่ต้องการจะค้นหา Ex.CSSXXX"
+											onSearch={this.onSearch}
+											style={{ width: 390, alignSelf: 'center' }}
 										/>
+									</Custom_Center>
+									<Custom_Center_X>
+										{filtered_courseData.map((data) => {
+											return (
+												<CoursesList
+													on_drag={this.addCourseToStudiedlist}
+													title={`${data.courseID} ${data.courseName}`}
+												/>
+											);
+										})}
 									</Custom_Center_X>
 								</Custom_Courses_Holder>
 
