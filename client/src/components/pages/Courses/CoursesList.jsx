@@ -196,7 +196,7 @@ export default class CoursesList extends Component {
 				return (
 					<Panel
 						header={courseData.courseID + ' ' + courseData.courseName}
-						key={index}
+						key={`${search_str}-${index}`}
 						className="site-collapse-custom-panel"
 					>
 						{courseData.required ? (
