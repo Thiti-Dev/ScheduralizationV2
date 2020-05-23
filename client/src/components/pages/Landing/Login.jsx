@@ -52,7 +52,7 @@ const Login = inject('authStore')(
 					console.log('[DEBUG]: Successfully loggedIn');
 
 					this.props.authStore.setAuthenticated(true, _res.data.token, (is_auth) => {
-						this.props.history.push('/home');
+						this.props.history.push('/dashboard');
 					});
 				} catch (error) {
 					console.log(error.response);
@@ -83,6 +83,7 @@ const Login = inject('authStore')(
 									<Input
 										prefix={<UserOutlined className="site-form-item-icon" />}
 										placeholder="Kmutt's Email"
+										autoComplete="off"
 									/>
 								</Form.Item>
 								<Form.Item

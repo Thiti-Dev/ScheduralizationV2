@@ -6,6 +6,7 @@ const { User, Course } = require('../models');
 // ─── UTILS ──────────────────────────────────────────────────────────────────────
 //
 const objectKeyFilter = require('../utils/objectKeyFilter');
+const sendTokenResponse = require('../utils/tokenResponse');
 // ────────────────────────────────────────────────────────────────────────────────
 
 // @desc    Get specific data of the current user
@@ -53,7 +54,8 @@ exports.updateSpecificData = asyncHandler(async (req, res, next) => {
 	await user.update(filtered_updated_data); // updating
 	// ────────────────────────────────────────────────────────────────────────────────
 
-	res.status(200).json({ success: true });
+	//res.status(200).json({ success: true });
+	sendTokenResponse(user, 200, res);
 });
 
 // @desc    Get specific data of the current user
@@ -78,7 +80,8 @@ exports.updateStudiedCourses = asyncHandler(async (req, res, next) => {
 
 	await user_data.save();
 
-	res.status(200).json({ success: true, data: finalized_courses_plain_str });
+	//res.status(200).json({ success: true, data: finalized_courses_plain_str });
+	sendTokenResponse(user, 200, res);
 });
 
 // @desc    Get joined data of all of the study courses from plain string(separator)
@@ -127,5 +130,6 @@ exports.initializeNewUser = asyncHandler(async (req, res, next) => {
 	await user.save();
 	// ────────────────────────────────────────────────────────────────────────────────
 
-	res.status(200).json({ success: true });
+	//res.status(200).json({ success: true });
+	sendTokenResponse(user, 200, res);
 });

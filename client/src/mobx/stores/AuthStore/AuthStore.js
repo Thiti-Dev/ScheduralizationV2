@@ -34,10 +34,19 @@ export class AuthStore {
 			if (cb) cb(bool);
 		}
 	}
+
+	updateUserDataFromToken(token, cb) {
+		//Decode token to get user data
+		const decoded = jwt_decode(token);
+		this.userData = decoded;
+
+		if (cb) cb(true);
+	}
 }
 
 decorate(AuthStore, {
 	isAuthenticated: observable,
 	userData: observable,
-	setAuthenticated: action.bound
+	setAuthenticated: action.bound,
+	updateUserDataFromToken: action.bound
 });

@@ -24,6 +24,12 @@ import Courses from './components/pages/Courses';
 // ────────────────────────────────────────────────────────────────────────────────
 
 //
+// ─── TEST ───────────────────────────────────────────────────────────────────────
+//
+import InitModal from './components/common/InitModal';
+// ────────────────────────────────────────────────────────────────────────────────
+
+//
 // ─── AUTH FLOW ──────────────────────────────────────────────────────────────────
 //
 import PrivateRoute from './components/common/PrivateRoute';
@@ -71,6 +77,7 @@ export default class App extends Component {
 			<Provider {...store}>
 				<Router>
 					<LoadingBarMobx />
+					<InitModal />
 					<Switch>
 						<Route exact path="/" component={Landing} />
 						<Route exact path="/home" component={Home} />
