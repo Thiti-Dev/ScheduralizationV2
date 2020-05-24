@@ -25,7 +25,9 @@ module.exports = (sequelize, DataTypes) => {
 				name: 'userId',
 				allowNull: false
 			},
-			as: 'userData'
+			as: 'userData',
+			onDelete: 'CASCADE',
+			onUpdate: 'CASCADE'
 		});
 	};
 	return CourseScore;
