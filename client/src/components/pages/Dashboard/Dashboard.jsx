@@ -138,7 +138,13 @@ const Dashboard = inject('rootStore')(
 									<Card_Action_Image img={find_img} />
 									<Card_Action_Text>Find people based on ur profession</Card_Action_Text>
 								</Card_Action>
-								<Card_Action className="hvr-grow">
+								<Card_Action
+									className="hvr-grow"
+									onClick={() => {
+										this.props.history.push('courseinit');
+										instantProcess();
+									}}
+								>
 									<Card_Action_Image img={course_img} />
 									<Card_Action_Text>Add/Edit Studied Course</Card_Action_Text>
 								</Card_Action>
