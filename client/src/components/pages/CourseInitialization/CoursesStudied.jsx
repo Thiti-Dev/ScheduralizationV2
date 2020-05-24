@@ -5,6 +5,12 @@ import { DropTarget } from 'react-dnd';
 
 import CoursesStudiedList from './CoursesStudiedList';
 
+//
+// ─── FAKELOAD ───────────────────────────────────────────────────────────────────
+//
+import doFakeLoadIfNeeded from '../../../utils/fakeLoader';
+// ────────────────────────────────────────────────────────────────────────────────
+
 const Custom_Courses_Holder = styled.div`
 	width: 50rem;
 	height: 45rem;
@@ -23,7 +29,29 @@ const Custom_Center_X = styled.div`
 	justify-content: flex-start;
 	flex-direction: column;
 	overflow-y: auto;
+	overflow-x: hidden;
 	height: 80%;
+
+	/* width */
+	::-webkit-scrollbar {
+		width: 10px;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+		background: #f1f1f1;
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		background: #888;
+		border-radius: 20px;
+	}
+
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+		background: #555;
+	}
 `;
 
 function collect(connect, monitor) {
@@ -35,8 +63,24 @@ function collect(connect, monitor) {
 }
 
 class CoursesStudied extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			is_requesting: false
+		};
+	}
 	render() {
-		const { connectDropTarget, hovered, item } = this.props;
+		const {
+			connectDropTarget,
+			hovered,
+			item,
+			detect_changes,
+			studied_list,
+			on_remove,
+			on_discard,
+			on_save
+		} = this.props;
+		const { is_requesting } = this.state;
 		return (
 			<Custom_Courses_Holder
 				ref={(instance) => {
@@ -46,13 +90,39 @@ class CoursesStudied extends Component {
 			>
 				<Custom_Description_Header>
 					My Studied Courses{' '}
-					<Button type="primary" ghost style={{ marginLeft: '2rem', marginRight: '0.5rem' }}>
-						Save changes
-					</Button>
-					<Button danger>Discard</Button>
+					{detect_changes ? (
+						<React.Fragment>
+							<Button
+								loading={is_requesting}
+								onClick={async () => {
+									this.setState({ is_requesting: true });
+									await doFakeLoadIfNeeded();
+									on_save();
+									this.setState({ is_requesting: false });
+								}}
+								type="primary"
+								ghost
+								style={{ marginLeft: '2rem', marginRight: '0.5rem' }}
+							>
+								Save changes
+							</Button>
+							<Button danger onClick={on_discard}>
+								Discard
+							</Button>{' '}
+						</React.Fragment>
+					) : null}
 				</Custom_Description_Header>
 				<Custom_Center_X>
-					<CoursesStudiedList title="CSS101 EXPLORING COMPUTER SCIENCE" />
+					{studied_list.map((data, index) => {
+						return (
+							<CoursesStudiedList
+								_key={index}
+								courseID={data.courseID}
+								courseName={data.courseName}
+								on_remove={(id, key) => on_remove(id, key)}
+							/>
+						);
+					})}
 				</Custom_Center_X>
 			</Custom_Courses_Holder>
 		);

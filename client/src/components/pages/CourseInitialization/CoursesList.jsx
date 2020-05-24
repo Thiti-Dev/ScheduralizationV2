@@ -8,7 +8,7 @@ const Types = {
 
 const Custom_Card = styled.div`
 	align-self: center;
-	width: 50%;
+	width: 80%;
 	height: 2.5rem;
 	line-height: 2.5rem;
 	text-align: center;
@@ -44,8 +44,8 @@ const cardSource = {
 			return;
 		}
 
-		console.log('[DRAG][ON-TARGET]: Dropped => ' + props.title);
-		props.on_drag(props.title);
+		console.log('[DRAG][ON-TARGET]: Dropped => ' + props.courseID);
+		props.on_drag(props.courseID, props.courseName);
 	}
 };
 
@@ -65,7 +65,7 @@ function collect(connect, monitor) {
 class CoursesList extends Component {
 	render() {
 		const { isDragging, connectDragSource } = this.props;
-		const { title } = this.props;
+		const { courseID, courseName } = this.props;
 		return (
 			<Custom_Card
 				drag={isDragging}
@@ -74,7 +74,7 @@ class CoursesList extends Component {
 					//connectDropTarget(instance);
 				}}
 			>
-				{title}
+				{`${courseID} ${courseName}`}
 			</Custom_Card>
 		);
 	}
