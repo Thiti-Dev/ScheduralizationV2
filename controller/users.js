@@ -1,6 +1,6 @@
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
-const { User, Course } = require('../models');
+const { User, Course, CourseScore } = require('../models');
 
 //
 // ─── UTILS ──────────────────────────────────────────────────────────────────────
@@ -132,4 +132,35 @@ exports.initializeNewUser = asyncHandler(async (req, res, next) => {
 
 	//res.status(200).json({ success: true });
 	sendTokenResponse(user, 200, res);
+});
+
+// @desc    Get joined data of all of the study courses from plain string(separator) and join with the course score data
+// @route   GET /api/users/getstudiedcoursesdatafromstringwithscoredata
+// @acess   Private
+exports.getStudiedCoursesWithScoreData = asyncHandler(async (req, res, next) => {
+	const courses_plain_str = req.user.learnedCourses;
+
+	//
+	// ─── Data(Mess) cleanner
+	//
+	const finalized_courses_plain_array = courses_plain_str.split(',').filter(Boolean);
+	// ────────────────────────────────────────────────────────────────────────────────
+	const courses = await Course.findAll({
+		where: {
+			courseID: finalized_courses_plain_array
+		},
+		subQuery: false,
+		order: [ [ 'courseID', 'ASC' ] ],
+		include: [
+			{
+				model: CourseScore,
+				as: 'courseScoring',
+				where: {
+					userId: req.user.id
+				},
+				required: false
+			}
+		]
+	});
+	res.status(200).json({ success: true, data: courses });
 });
