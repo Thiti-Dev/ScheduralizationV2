@@ -2,7 +2,7 @@ const crypto = require('crypto');
 
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
-const { User, CourseAvailable, Course, sequelize } = require('../models');
+const { User, CourseAvailable, Course, CourseScore, sequelize } = require('../models');
 const { Op } = require('sequelize');
 
 //
@@ -107,4 +107,64 @@ exports.getSpecificCourseWithConsequence = asyncHandler(async (req, res, next) =
 	}
 	const conflicted_data = await checkIfCourseHavingConsequenceOrNot(courseID, section, start, stop);
 	res.status(200).json({ success: true, data: conflicted_data });
+});
+
+// @desc    Give course a score&desc
+// @route   POST /api/courses/score/:courseID
+// @acess   Private
+exports.scoreTheCourse = asyncHandler(async (req, res, next) => {
+	const { courseID } = req.params;
+	const { score, desc } = req.body;
+
+	if (!score) {
+		return next(
+			new ErrorResponse(
+				`Invalid request body, must have had score with the type of number(1-5) as a request query`
+			)
+		);
+	}
+
+	const course_score_exist = await CourseScore.findOne({
+		where: {
+			userId: req.user.id,
+			courseID
+		}
+	});
+
+	let course_scored;
+	if (!course_score_exist) {
+		course_scored = await CourseScore.create({
+			courseID,
+			score,
+			description: desc || null,
+			userId: req.user.id
+		});
+	} else {
+		course_scored = await course_score_exist.update({
+			score,
+			description: desc || null
+		});
+	}
+
+	res.status(200).json({ success: true, data: course_scored });
+});
+
+// @desc    Get course a score&desc
+// @route   GET /api/courses/score/:courseID
+// @acess   Public
+exports.getScoreAndDesc = asyncHandler(async (req, res, next) => {
+	const { courseID } = req.params;
+	const course_score = await CourseScore.findAll({
+		where: {
+			courseID
+		},
+		include: [
+			{
+				model: User,
+				as: 'userData',
+				attributes: [ 'firstName', 'lastName', 'year', 'studentID' ]
+			}
+		]
+	});
+	res.status(200).json({ success: true, data: course_score });
 });
