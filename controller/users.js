@@ -81,7 +81,7 @@ exports.updateStudiedCourses = asyncHandler(async (req, res, next) => {
 	await user_data.save();
 
 	//res.status(200).json({ success: true, data: finalized_courses_plain_str });
-	sendTokenResponse(user, 200, res);
+	sendTokenResponse(user_data, 200, res);
 });
 
 // @desc    Get joined data of all of the study courses from plain string(separator)
