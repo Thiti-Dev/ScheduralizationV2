@@ -33,6 +33,15 @@ module.exports = (sequelize, DataTypes) => {
 			sourceKey: 'courseID',
 			as: 'courseAvailable'
 		});
+
+		Course.hasMany(models.CourseScore, {
+			foreignKey: {
+				name: 'courseID',
+				allowNull: false
+			},
+			sourceKey: 'courseID',
+			as: 'courseScoring'
+		});
 	};
 	return Course;
 };
