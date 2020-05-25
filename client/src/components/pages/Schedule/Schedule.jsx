@@ -4,8 +4,32 @@ import axios from 'axios';
 
 // ─── ANTD ───────────────────────────────────────────────────────────────────────
 //
-import { Row, Col, Divider, Layout, Button, PageHeader, Menu, Dropdow, Tag, Typography, Breadcrumb } from 'antd';
-import { EllipsisOutlined, HomeOutlined, UserOutlined, MenuOutlined, ScheduleOutlined } from '@ant-design/icons';
+import {
+	Row,
+	Col,
+	Divider,
+	Layout,
+	Button,
+	PageHeader,
+	Menu,
+	Dropdow,
+	Tag,
+	Typography,
+	Breadcrumb,
+	Drawer,
+	List,
+	Badge,
+	Modal,
+	message
+} from 'antd';
+import {
+	EllipsisOutlined,
+	HomeOutlined,
+	UserOutlined,
+	MenuOutlined,
+	ScheduleOutlined,
+	ExclamationCircleOutlined
+} from '@ant-design/icons';
 
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -24,6 +48,7 @@ import {
 
 const { Header, Content, Footer } = Layout;
 const { Paragraph } = Typography;
+const { confirm } = Modal;
 
 //
 // ─── FIX HIDDEN OVERFLOW BY DEFAULT APPCSS ──────────────────────────────────────
@@ -275,6 +300,101 @@ const _user_assigned_course = [
 		}
 	}
 ];
+
+const mock_available = [
+	{
+		id: 1523,
+		courseID: 'CSS227',
+		semester: 2,
+		totalSeat: 50,
+		section: '1',
+		allowedGroup: 'CSS 2 A(48)',
+		day: 'พ.',
+		start: '10.30',
+		end: '12.30',
+		classroom: 'SCL703',
+		createdAt: '2020-05-21T18:09:43.849Z',
+		updatedAt: '2020-05-21T18:09:43.849Z',
+		courseData: {
+			id: 197,
+			courseID: 'CSS227',
+			courseName: 'WEB PROGRAMMING',
+			required: 'CSS112/CSS114',
+			credit: 3,
+			createdAt: '2020-05-21T18:09:21.754Z',
+			updatedAt: '2020-05-21T18:09:21.754Z'
+		},
+		consequence_data: {
+			id: 1525,
+			courseID: 'CSS227',
+			semester: 2,
+			totalSeat: 50,
+			section: '1',
+			allowedGroup: 'OTHER (0)',
+			day: 'พ.',
+			start: '08.30',
+			end: '10.30',
+			classroom: 'SCL602',
+			createdAt: '2020-05-21T18:09:43.849Z',
+			updatedAt: '2020-05-21T18:09:43.849Z',
+			courseData: {
+				id: 197,
+				courseID: 'CSS227',
+				courseName: 'WEB PROGRAMMING',
+				required: 'CSS112/CSS114',
+				credit: 3,
+				createdAt: '2020-05-21T18:09:21.754Z',
+				updatedAt: '2020-05-21T18:09:21.754Z'
+			}
+		}
+	},
+	{
+		id: 1568,
+		courseID: 'CSS499',
+		semester: 2,
+		totalSeat: 30,
+		section: '1',
+		allowedGroup: 'CSS 4 A(0)',
+		day: 'พ.',
+		start: '08.30',
+		end: '11.30',
+		classroom: 'SCL607',
+		createdAt: '2020-05-21T18:09:43.849Z',
+		updatedAt: '2020-05-21T18:09:43.849Z',
+		courseData: {
+			id: 217,
+			courseID: 'CSS499',
+			courseName: 'SPECIAL TOPICS III : DIGITAL STARTUP',
+			required: null,
+			credit: 3,
+			createdAt: '2020-05-21T18:09:21.754Z',
+			updatedAt: '2020-05-21T18:09:21.754Z'
+		}
+	},
+	{
+		id: 1690,
+		courseID: 'MTH494',
+		semester: 2,
+		totalSeat: 10,
+		section: '1',
+		allowedGroup: 'OTHER (0)',
+		day: 'พ.',
+		start: '09.00',
+		end: '12.00',
+		classroom: 'SC2216',
+		createdAt: '2020-05-21T18:09:43.849Z',
+		updatedAt: '2020-05-21T18:09:43.849Z',
+		courseData: {
+			id: 239,
+			courseID: 'MTH494',
+			courseName: 'SPECIAL TOPICS IV : STATISTICAL CONSULTING',
+			required: null,
+			credit: 3,
+			createdAt: '2020-05-21T18:09:21.754Z',
+			updatedAt: '2020-05-21T18:09:21.754Z'
+		}
+	}
+];
 // ────────────────────────────────────────────────────────────────────────────────
 
 function sleep(ms) {
@@ -287,10 +407,15 @@ export default class Schedule extends Component {
 		this.state = {
 			// Yet still empty
 			schedule_courses: [],
-			_delete: false
+			_delete: false,
+			panel_visible: false,
+			panel_extra: []
 		};
 		this.onSelectTimelineInSchedule = this.onSelectTimelineInSchedule.bind(this);
 		this.onDeleteAssignedCourse = this.onDeleteAssignedCourse.bind(this);
+		this.onClosePanel = this.onClosePanel.bind(this);
+		this.onAssignCourse = this.onAssignCourse.bind(this);
+		this.assignCourse = this.assignCourse.bind(this);
 	}
 	async fetchUserScheduleData() {
 		try {
@@ -367,20 +492,146 @@ export default class Schedule extends Component {
 		// ─────────────────────────────────────────────────────────────────
 		console.log(safe_start_time);
 		console.log(safe_stop_time);
+
+		try {
+			const _res = await axios.get(
+				`/api/courses/getavailablebetweentime?start=${safe_start_time}&end=${safe_stop_time}&day=${day}`
+			);
+			this.setState({ panel_visible: true, panel_extra: _res.data.data });
+		} catch (error) {
+			//@TODO show error message
+			console.log(error.response.data);
+		}
 	}
-	onDeleteAssignedCourse(c_id) {
+	async onDeleteAssignedCourse(c_id) {
 		console.log('[DEBUG]: Trying to delete course ' + c_id);
 		this.setState({ _delete: true }); // prevent get available course at time from calling
 		setTimeout(() => {
 			this.setState({ _delete: false }); // debounce
 		}, 500);
+
+		let _this = this;
+		confirm({
+			title: `Do you want to remove ${c_id}?`,
+			icon: <ExclamationCircleOutlined />,
+			content: 'Removing schedule course can be done without causing any conflicts',
+			onOk() {
+				return new Promise(async (resolve, reject) => {
+					try {
+						const _res = await axios.delete(`/api/courses/${c_id}/assign`);
+
+						// If succesfully deleted
+						_this.fetchUserScheduleData(); // re-fetch the user scheduled
+						resolve();
+						message.success(`Successfully removed ${c_id} from your schedule`);
+					} catch (error) {
+						//@TODO show error message
+						console.log(error);
+						reject(`Error in deleting course`);
+					}
+				}).catch(() => console.log('Oops errors!'));
+			},
+			onCancel() {}
+		});
+	}
+	async assignCourse(c_id, section) {
+		console.log('[ASSIGN]: CID: ' + c_id + ' SECTION: ' + section);
+		try {
+			const _res = await axios.post(`/api/courses/${c_id}/assign`, { section });
+
+			// If assgin successfully
+			this.fetchUserScheduleData(); // re-fetch the user scheduled
+			this.onClosePanel();
+			message.success(`Successfully added ${c_id} to your schedule`);
+		} catch (error) {}
+	}
+	async onAssignCourse(c_id, section, start, end) {
+		console.log('[DEBUG]: Trying to schedule ' + c_id + ' section ' + section);
+
+		//
+		// ─── CHECKING FOR CONSEQUENCE ────────────────────────────────────
+		//
+		try {
+			const _res = await axios.get(
+				`/api/courses/getSpecificCourseWithConsequence/${c_id}?section=${section}&start=${start}&stop=${end}`
+			);
+			const consequence = _res.data.data;
+			if (consequence) {
+				const { is_free } = _res.data;
+				console.log('[DEBUG]: Found consequence, user free => ' + is_free);
+				if (is_free) {
+					this.assignCourse(c_id, section); // assign the course because user is free => no need to show modal message
+				} else {
+					// If user is not free for consequence course
+				}
+			} else {
+				console.log('[DEBUG]: No consequence found');
+				this.assignCourse(c_id, section);
+			}
+		} catch (error) {
+			//@TODO show error message
+			console.log(error);
+		}
+		// ─────────────────────────────────────────────────────────────────
+	}
+	onClosePanel() {
+		this.setState({ panel_visible: false });
 	}
 	render() {
-		const { schedule_courses } = this.state;
+		const { schedule_courses, panel_visible, panel_extra } = this.state;
 		return (
 			<React.Fragment>
 				<GlobalStyle />
 				<Outer_Holder>
+					<Drawer
+						width={500}
+						title="Available Courses"
+						placement="right"
+						closable={true}
+						onClose={this.onClosePanel}
+						visible={panel_visible}
+						key="right"
+					>
+						<List
+							size="large"
+							bordered
+							dataSource={panel_extra}
+							renderItem={(data) => (
+								<List.Item>
+									<span>
+										<Tag color="#108ee9">section:{data.section}</Tag>
+									</span>
+									{`${data.courseID} ${data.courseData.courseName}`}
+									<br />
+									<Badge
+										color="green"
+										text={`${data.day} ${data.start} ${data.end} ${data.classroom}`}
+									/>
+									{data.consequence_data ? (
+										<React.Fragment>
+											<br />
+											<Badge
+												color="green"
+												text={`${data.consequence_data.day} ${data.consequence_data
+													.start} ${data.consequence_data.end} ${data.consequence_data
+													.classroom}`}
+											/>
+										</React.Fragment>
+									) : null}
+									<br />
+									<div style={{ textAlign: 'right' }}>
+										<Button
+											type="ghost"
+											onClick={() =>
+												this.onAssignCourse(data.courseID, data.section, data.start, data.end)}
+										>
+											Pick course
+										</Button>
+									</div>
+								</List.Item>
+							)}
+						/>
+					</Drawer>
 					<Breadcrumb_Render history={this.props.history} />
 					<PageHeader
 						title="Thiti Mahawannakit"
@@ -436,6 +687,10 @@ export default class Schedule extends Component {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
+																				onClick={() =>
+																					this.onDeleteAssignedCourse(
+																						courseData.courseID
+																					)}
 																				hour={courseData.duration}
 																				start={courseData.start}
 																				end={courseData.end}
