@@ -8,18 +8,29 @@ const { Op } = require('sequelize');
 //
 // ─── UTILS FUNCTION ─────────────────────────────────────────────────────────────
 //
-async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end, semester = 2) {
+async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end, day, semester = 2) {
 	const courses = await CourseAvailable.findOne({
 		where: {
 			courseID,
 			section,
 			semester,
-			start: {
-				[Op.ne]: start
-			},
-			end: {
-				[Op.ne]: end
-			}
+			[Op.or]: [
+				{
+					day: {
+						[Op.ne]: day
+					}
+				},
+				{
+					start: {
+						[Op.ne]: start
+					}
+				},
+				{
+					end: {
+						[Op.ne]: end
+					}
+				}
+			]
 		},
 		include: [
 			{
@@ -32,7 +43,8 @@ async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end
 	if (courses.length > 0) {
 		result = courses;
 	}*/
-
+	console.log('funck');
+	console.log(courses);
 	return courses;
 }
 
@@ -177,7 +189,7 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 // @acess   Private
 exports.getSpecificCourseWithConsequence = asyncHandler(async (req, res, next) => {
 	const { courseID } = req.params;
-	const { section, start, stop } = req.query;
+	const { section, start, stop, day } = req.query;
 
 	if (!courseID || !section || !start || !stop) {
 		return next(
@@ -192,6 +204,7 @@ exports.getSpecificCourseWithConsequence = asyncHandler(async (req, res, next) =
 		section,
 		start,
 		stop,
+		day,
 		req.user.semester
 	);
 	if (conflicted_data) {
@@ -360,6 +373,7 @@ exports.assignSchedule = asyncHandler(async (req, res, next) => {
 		section,
 		course_info.start,
 		course_info.end,
+		course_info.day,
 		req.user.semester
 	);
 
