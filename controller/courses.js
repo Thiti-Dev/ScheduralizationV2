@@ -278,11 +278,28 @@ exports.assignSchedule = asyncHandler(async (req, res, next) => {
 			courseID,
 			section,
 			semester: req.user.semester
-		}
+		},
+		include: [
+			{
+				model: Course,
+				as: 'courseData'
+			}
+		]
 	});
 	if (!course_info) {
 		return next(new ErrorResponse(`Courses ${courseID} with section ${section} isn't exist`, 404));
 	}
+
+	//
+	// ─── CHECK IF MEET THE REQUIREMENT OF THE COURSE ────────────────────────────────
+	//
+	if (course_info.courseData.required) {
+		if (!isAbleToRegisterTheCourse(course_info.courseData.required, req.user.learnedCourses)) {
+			return next(new ErrorResponse(`You don't meet the requirement of this course`, 400));
+		}
+	}
+	// ────────────────────────────────────────────────────────────────────────────────
+
 	const consequence = await checkIfCourseHavingConsequenceOrNot(
 		courseID,
 		section,
