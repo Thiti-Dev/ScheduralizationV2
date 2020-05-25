@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
 			},
 			year: {
 				type: DataTypes.INTEGER,
-				allowNull: false
+				allowNull: true
 			},
 			semester: {
 				type: DataTypes.INTEGER,
