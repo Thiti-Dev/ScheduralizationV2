@@ -113,6 +113,14 @@ module.exports = (sequelize, DataTypes) => {
 			},
 			as: 'courseScoring'
 		});
+
+		User.hasMany(models.UserSchedule, {
+			foreignKey: {
+				name: 'userId',
+				allowNull: false
+			},
+			as: 'userSchedule'
+		});
 	};
 	return User;
 };
