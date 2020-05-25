@@ -173,7 +173,13 @@ const Dashboard = inject('rootStore')(
 									<Card_Action_Image img={course_feedback_img} />
 									<Card_Action_Text>Course Scoring</Card_Action_Text>
 								</Card_Action>
-								<Card_Action className="hvr-grow">
+								<Card_Action
+									className="hvr-grow"
+									onClick={() => {
+										this.props.history.push('/profile');
+										instantProcess();
+									}}
+								>
 									<Card_Action_Image img={profile_img} />
 									<Card_Action_Text>View/Edit Profile</Card_Action_Text>
 								</Card_Action>
