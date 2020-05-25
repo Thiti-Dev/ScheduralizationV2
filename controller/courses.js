@@ -415,6 +415,8 @@ exports.assignSchedule = asyncHandler(async (req, res, next) => {
 				day: course_info.day,
 				start: course_info.start,
 				end: course_info.end,
+				section: course_info.section,
+				classroom: course_info.classroom,
 				userId: req.user.id
 			});
 		}
@@ -482,6 +484,8 @@ exports.assignSchedule = asyncHandler(async (req, res, next) => {
 				day: course_info.day,
 				start: course_info.start,
 				end: course_info.end,
+				section: course_info.section,
+				classroom: course_info.classroom,
 				userId: req.user.id
 			},
 			{
@@ -489,6 +493,8 @@ exports.assignSchedule = asyncHandler(async (req, res, next) => {
 				day: consequence.day,
 				start: consequence.start,
 				end: consequence.end,
+				section: consequence.section,
+				classroom: consequence.classroom,
 				userId: req.user.id
 			}
 		]);
