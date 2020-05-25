@@ -90,7 +90,7 @@ export default class CoursesList extends Component {
 	render() {
 		let rendered_course;
 		let filtered_courseData;
-		const { coursesData, search_str } = this.props;
+		const { coursesData, search_str, on_view_feedback } = this.props;
 		if (coursesData) {
 			if (!search_str) {
 				filtered_courseData = coursesData;
@@ -200,10 +200,14 @@ export default class CoursesList extends Component {
 						className="site-collapse-custom-panel"
 					>
 						{courseData.required ? (
-							<text>
-								<span style={{ color: 'red' }}>* วิชาที่ต้องเรียนมาก่อน </span>
-								{splitRequiredCourseToNormalizeText(courseData.required)}
-							</text>
+							<React.Fragment>
+								<div style={{ marginBottom: '0.5rem' }}>
+									<text>
+										<span style={{ color: 'red' }}>* วิชาที่ต้องเรียนมาก่อน </span>
+										{splitRequiredCourseToNormalizeText(courseData.required)}
+									</text>
+								</div>
+							</React.Fragment>
 						) : null}
 						<Collapse
 							bordered={false}
@@ -244,6 +248,9 @@ export default class CoursesList extends Component {
 								</Panel>
 							) : null}
 						</Collapse>
+						<div style={{ marginTop: '0.5rem' }}>
+							<a onClick={() => on_view_feedback(courseData.courseID)}>View feedback</a>
+						</div>
 					</Panel>
 				);
 			});

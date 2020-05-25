@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
 
+import axios from 'axios';
+
 // ─── ANTD ───────────────────────────────────────────────────────────────────────
 //
 import {
@@ -17,7 +19,11 @@ import {
 	Breadcrumb,
 	Collapse,
 	List,
-	Input
+	Input,
+	Drawer,
+	Avatar,
+	Rate,
+	Radio
 } from 'antd';
 import {
 	EllipsisOutlined,
@@ -26,7 +32,8 @@ import {
 	MenuOutlined,
 	ScheduleOutlined,
 	BookOutlined,
-	CaretRightOutlined
+	CaretRightOutlined,
+	StarOutlined
 } from '@ant-design/icons';
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -98,18 +105,135 @@ export default class Courses extends Component {
 		super(props);
 		this.state = {
 			// none
-			search_str: ''
+			search_str: '',
+			feedback_panel: false,
+			filter: 0 // default
 		};
+		this.onViewFeedback = this.onViewFeedback.bind(this);
+		this.onClose = this.onClose.bind(this);
 	}
 	componentDidMount() {
 		console.log(dummy);
 	}
+	async onViewFeedback(c_id) {
+		console.log('[DEBUG]: Trying to view feedback of ' + c_id);
+
+		try {
+			const _res = await axios.get(`/api/courses/score/${c_id}`);
+			// Fetch successfully
+			const feedback_data = _res.data.data;
+			this.setState({ feedback_panel: feedback_data, filter: 0 });
+		} catch (error) {
+			//@TODO show error messages
+			console.log(error.response.data);
+		}
+	}
+	onClose() {
+		this.setState({ feedback_panel: false });
+	}
 	render() {
-		const { search_str } = this.state;
+		const { search_str, feedback_panel, filter } = this.state;
+		let filtered_feedback = [];
+		if (feedback_panel && filter !== 0) {
+			filtered_feedback = feedback_panel.filter((data) => {
+				if (data.score === filter) {
+					return true;
+				}
+				return false;
+			});
+		} else {
+			if (feedback_panel && filter === 0) {
+				filtered_feedback = feedback_panel;
+			}
+		}
 		return (
 			<React.Fragment>
 				<GlobalStyle />
 				<Outer_Holder>
+					<Drawer
+						title="Course feedbacks"
+						width={720}
+						onClose={this.onClose}
+						visible={feedback_panel}
+						bodyStyle={{ paddingBottom: 80 }}
+						footer={
+							<div
+								style={{
+									textAlign: 'right'
+								}}
+							>
+								<Button onClick={this.onClose} style={{ marginRight: 8 }}>
+									Exit
+								</Button>
+							</div>
+						}
+					>
+						<Radio.Group
+							value={filter}
+							defaultValue={0}
+							buttonStyle="solid"
+							onChange={(e) => this.setState({ filter: e.target.value })}
+						>
+							<Radio.Button value={0}>
+								{' '}
+								<a>
+									<StarOutlined /> All
+								</a>
+							</Radio.Button>
+							<Radio.Button value={5}>
+								{' '}
+								<a>
+									<StarOutlined /> 5
+								</a>
+							</Radio.Button>
+							<Radio.Button value={4}>
+								{' '}
+								<a>
+									<StarOutlined /> 4
+								</a>
+							</Radio.Button>
+							<Radio.Button value={3}>
+								{' '}
+								<a>
+									<StarOutlined /> 3
+								</a>
+							</Radio.Button>
+							<Radio.Button value={2}>
+								{' '}
+								<a>
+									<StarOutlined /> 2
+								</a>
+							</Radio.Button>
+							<Radio.Button value={1}>
+								{' '}
+								<a>
+									<StarOutlined /> 1
+								</a>
+							</Radio.Button>
+						</Radio.Group>
+						<List
+							itemLayout="horizontal"
+							dataSource={filtered_feedback || []}
+							renderItem={(data) => (
+								<List.Item>
+									<List.Item.Meta
+										avatar={
+											<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+										}
+										title={
+											<React.Fragment>
+												{`${data.userData.firstName} ${data.userData.lastName}`}
+												<span style={{ marginLeft: '1rem' }}>
+													<Rate disabled defaultValue={data.score} />
+												</span>
+											</React.Fragment>
+										}
+										description={data.description}
+									/>
+								</List.Item>
+							)}
+						/>
+					</Drawer>
 					<Breadcrumb_Render history={this.props.history} />
 					<PageHeader
 						title="Thiti Mahawannakit"
@@ -133,7 +257,11 @@ export default class Courses extends Component {
 								onChange={(e) => this.setState({ search_str: e.target.value })}
 								style={{ width: '20rem', marginBottom: '2rem' }}
 							/>
-							<CoursesLists coursesData={dummy} search_str={search_str} />
+							<CoursesLists
+								coursesData={dummy}
+								search_str={search_str}
+								on_view_feedback={this.onViewFeedback}
+							/>
 						</div>
 					</PageHeader>
 				</Outer_Holder>
