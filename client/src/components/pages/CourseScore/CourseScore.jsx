@@ -47,6 +47,12 @@ import axios from 'axios';
 import { dummy } from './_data.json';
 // ────────────────────────────────────────────────────────────────────────────────
 
+//
+// ─── SUB ────────────────────────────────────────────────────────────────────────
+//
+import ScorePanel from './ScorePanel';
+// ────────────────────────────────────────────────────────────────────────────────
+
 const { Header, Content, Footer } = Layout;
 const { Paragraph } = Typography;
 const { Search } = Input;
@@ -111,7 +117,6 @@ const columns = [
 			}
 		},
 		render: (scoring) => {
-			console.log('here : ' + scoring);
 			const color = scoring.length > 0 ? 'green' : 'volcano';
 			return (
 				<Tag color={color} key={scoring}>
@@ -124,11 +129,12 @@ const columns = [
 		title: 'Action',
 		key: 'action',
 		render: (text, record) => {
-			const { courseID, courseScoring } = record;
+			const { courseID, courseName, courseScoring } = record;
 			return (
 				<Space size="middle">
 					<a
-						onClick={() => window.courseScoreComponent.giveCourseAScore(courseID, courseScoring[0])}
+						onClick={() =>
+							window.courseScoreComponent.giveCourseAScore(courseID, courseName, courseScoring[0])}
 						href={null}
 					>
 						{courseScoring.length === 0 ? 'Give a score' : 'Edit a score'}
@@ -168,18 +174,83 @@ const Breadcrumb_Render = ({ history }) => (
 export default class CourseScore extends Component {
 	constructor(props) {
 		super(props);
+		this.state = {
+			panel_visible: false,
+			panel_extras: null,
+			course_score_data: []
+		};
 		this.giveCourseAScore = this.giveCourseAScore.bind(this);
+		this.onClosePanel = this.onClosePanel.bind(this);
+		this.onShowPanel = this.onShowPanel.bind(this);
+		this.onCompleteVoted = this.onCompleteVoted.bind(this);
 		window.courseScoreComponent = this; // for accessing outside class
 	}
-	giveCourseAScore(c_id, exist_data) {
+	async fetchUserScoreData() {
+		try {
+			const _res = await axios.get('/api/users/getstudiedcoursesdatafromstringwithscoredata');
+			const _score_data = _res.data.data;
+			this.setState({ course_score_data: _score_data });
+		} catch (error) {
+			//@TODO show error messages
+			console.log(error.response.data);
+		}
+	}
+	componentDidMount() {
+		/*if (dummy) {
+			this.setState({ course_score_data: dummy });
+		}*/
+		this.fetchUserScoreData();
+	}
+	giveCourseAScore(c_id, c_name, exist_data) {
 		console.log('[DEBUG]: Give course a score, id: ' + c_id);
 		console.log(exist_data);
+		if (exist_data) {
+			this.onShowPanel(c_id, c_name, exist_data);
+		} else {
+			this.onShowPanel(c_id, c_name);
+		}
 	}
+
+	//
+	// ─── CALLBACK ───────────────────────────────────────────────────────────────────
+	//
+	onShowPanel(c_id, c_name, exist_data = null) {
+		this.setState({
+			panel_visible: true,
+			panel_extras: {
+				courseID: c_id,
+				courseName: c_name,
+				exist_data
+			}
+		});
+	}
+	onClosePanel() {
+		this.setState({ panel_visible: false });
+	}
+	onCompleteVoted(c_id, updated_data) {
+		console.log('[DEBUG]: Updating ' + c_id);
+		var index = this.state.course_score_data.findIndex((p) => p.courseID == c_id);
+		console.log('[DEBUG]: Found index: ' + index);
+
+		//@NOTE this is cloning the array pointer
+		let cloned_data = [ ...this.state.course_score_data ];
+		cloned_data[index].courseScoring[0] = updated_data; //new value
+		/*this.setState({ course_score_data: cloned_data });*/
+	}
+	// ────────────────────────────────────────────────────────────────────────────────
+
 	render() {
+		const { panel_visible, panel_extras, course_score_data } = this.state;
 		return (
 			<React.Fragment>
 				<GlobalStyle />
 				<Outer_Holder>
+					<ScorePanel
+						on_close={this.onClosePanel}
+						is_visible={panel_visible}
+						extra={panel_extras}
+						on_complete={this.onCompleteVoted}
+					/>
 					<Breadcrumb_Render history={this.props.history} />
 					<PageHeader
 						title="Thiti Mahawannakit"
@@ -198,7 +269,7 @@ export default class CourseScore extends Component {
 						<Table
 							style={{ marginTop: '2rem' }}
 							columns={columns}
-							dataSource={dummy}
+							dataSource={course_score_data}
 							bordered
 							size="large"
 						/>
