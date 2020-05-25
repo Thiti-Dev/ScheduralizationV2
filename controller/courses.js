@@ -8,18 +8,29 @@ const { Op } = require('sequelize');
 //
 // ─── UTILS FUNCTION ─────────────────────────────────────────────────────────────
 //
-async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end, semester = 2) {
+async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end, day, semester = 2) {
 	const courses = await CourseAvailable.findOne({
 		where: {
 			courseID,
 			section,
 			semester,
-			start: {
-				[Op.ne]: start
-			},
-			end: {
-				[Op.ne]: end
-			}
+			[Op.or]: [
+				{
+					day: {
+						[Op.ne]: day
+					}
+				},
+				{
+					start: {
+						[Op.ne]: start
+					}
+				},
+				{
+					end: {
+						[Op.ne]: end
+					}
+				}
+			]
 		},
 		include: [
 			{
@@ -32,7 +43,8 @@ async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end
 	if (courses.length > 0) {
 		result = courses;
 	}*/
-
+	console.log('funck');
+	console.log(courses);
 	return courses;
 }
 
@@ -43,7 +55,6 @@ function filterOutTheCoursesThatAlreadyAssign(assign_courses, available_courses)
 	});
 	return filtered_array;
 }
-// ────────────────────────────────────────────────────────────────────────────────
 
 function distinctArrayOfObject(_data, _distinct_key, based_key) {
 	const flagged_object_value = {}; // store an object
@@ -75,6 +86,32 @@ function distinctArrayOfObject(_data, _distinct_key, based_key) {
 	});
 	return filtered_data;
 }
+
+function combineConsequenceToSingleElement(base_array) {
+	const finalized_array = [];
+
+	base_array.forEach((data) => {
+		let sub_conseq = false;
+		finalized_array.forEach((_data, index) => {
+			if (!sub_conseq) {
+				if (
+					_data.semester === data.semester &&
+					_data.courseID === data.courseID &&
+					_data.section === data.section
+				) {
+					finalized_array[index].consequence_data = Object.assign({}, data);
+
+					sub_conseq = true;
+				}
+			}
+		});
+		if (!sub_conseq) {
+			finalized_array.push(data);
+		}
+	});
+	return finalized_array;
+}
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 // @desc    Get all available courses that exist in the database
@@ -127,7 +164,9 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 				model: Course,
 				as: 'courseData'
 			}
-		]
+		],
+		raw: true,
+		nest: true
 	});
 	const finalized_available = distinctArrayOfObject(course, [ 'start', 'end', 'day' ], 'section');
 	const filtered_available = filterOutTheCoursesThatAlreadyAssign(req.user.learnedCourses, finalized_available);
@@ -140,8 +179,9 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 		}
 		return false;
 	});
+	const filtered_group_of_consequence = combineConsequenceToSingleElement(filtered_meet_requirement);
 
-	res.status(200).json({ success: true, data: filtered_meet_requirement });
+	res.status(200).json({ success: true, data: filtered_group_of_consequence });
 });
 
 // @desc    Get the consequence of the specific course
@@ -149,7 +189,7 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 // @acess   Private
 exports.getSpecificCourseWithConsequence = asyncHandler(async (req, res, next) => {
 	const { courseID } = req.params;
-	const { section, start, stop } = req.query;
+	const { section, start, stop, day } = req.query;
 
 	if (!courseID || !section || !start || !stop) {
 		return next(
@@ -158,14 +198,24 @@ exports.getSpecificCourseWithConsequence = asyncHandler(async (req, res, next) =
 			)
 		);
 	}
+	let is_free = undefined;
 	const conflicted_data = await checkIfCourseHavingConsequenceOrNot(
 		courseID,
 		section,
 		start,
 		stop,
+		day,
 		req.user.semester
 	);
-	res.status(200).json({ success: true, data: conflicted_data });
+	if (conflicted_data) {
+		is_free = await checkIfUserFreeAtPeriodOfTimeAndDay(
+			conflicted_data.start,
+			conflicted_data.end,
+			conflicted_data.day,
+			req.user.id
+		);
+	}
+	res.status(200).json({ success: true, data: conflicted_data, is_free });
 });
 
 // @desc    Give course a score&desc
@@ -287,11 +337,14 @@ function isAbleToRegisterTheCourse(required, learnedCourses) {
 // @acess   Private
 exports.assignSchedule = asyncHandler(async (req, res, next) => {
 	const { courseID } = req.params;
-	const { section } = req.body;
+	const { section, start, end, day } = req.body;
 	const course_info = await CourseAvailable.findOne({
 		where: {
 			courseID,
 			section,
+			start,
+			end,
+			day,
 			semester: req.user.semester
 		},
 		include: [
@@ -320,6 +373,7 @@ exports.assignSchedule = asyncHandler(async (req, res, next) => {
 		section,
 		course_info.start,
 		course_info.end,
+		course_info.day,
 		req.user.semester
 	);
 
@@ -361,6 +415,8 @@ exports.assignSchedule = asyncHandler(async (req, res, next) => {
 				day: course_info.day,
 				start: course_info.start,
 				end: course_info.end,
+				section: course_info.section,
+				classroom: course_info.classroom,
 				userId: req.user.id
 			});
 		}
@@ -428,6 +484,8 @@ exports.assignSchedule = asyncHandler(async (req, res, next) => {
 				day: course_info.day,
 				start: course_info.start,
 				end: course_info.end,
+				section: course_info.section,
+				classroom: course_info.classroom,
 				userId: req.user.id
 			},
 			{
@@ -435,6 +493,8 @@ exports.assignSchedule = asyncHandler(async (req, res, next) => {
 				day: consequence.day,
 				start: consequence.start,
 				end: consequence.end,
+				section: consequence.section,
+				classroom: consequence.classroom,
 				userId: req.user.id
 			}
 		]);

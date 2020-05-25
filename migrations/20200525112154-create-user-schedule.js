@@ -20,6 +20,14 @@ module.exports = {
 			end: {
 				type: Sequelize.STRING
 			},
+			classroom: {
+				type: Sequelize.STRING,
+				allowNull: false
+			},
+			section: {
+				type: Sequelize.STRING,
+				allowNull: false
+			},
 			createdAt: {
 				allowNull: false,
 				type: Sequelize.DATE
