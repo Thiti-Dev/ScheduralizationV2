@@ -246,6 +246,25 @@ async function checkIfUserFreeAtPeriodOfTimeAndDay(start, end, day, userId) {
 
 	return is_free;
 }
+function isAbleToRegisterTheCourse(required, learnedCourses) {
+	const or_split = required.split('/');
+
+	let able_to_regis = false;
+	or_split.forEach((plain_str) => {
+		if (!able_to_regis) {
+			const many_split = plain_str.split(',');
+			const meet_all = many_split.every((sigle_plain_str) => {
+				if (learnedCourses.includes(sigle_plain_str)) {
+					return true;
+				}
+			});
+			if (meet_all) {
+				able_to_regis = true;
+			}
+		}
+	});
+	return able_to_regis;
+}
 // ────────────────────────────────────────────────────────────────────────────────
 
 // @desc    Assign a course for schedule
