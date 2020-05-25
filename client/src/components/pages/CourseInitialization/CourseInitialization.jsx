@@ -318,6 +318,7 @@ const CourseInitialization = inject('authStore')(
 				const { allCoursesData, search_str, studiedList } = this.state;
 				if (!allCoursesData || !this.props.authStore.userData) return null;
 				const { learnedCourses } = this.props.authStore.userData;
+				const _learnedCourses = learnedCourses || '';
 				let filtered_courseData;
 				if (search_str) {
 					let _search_str = search_str.toLowerCase();
@@ -405,7 +406,7 @@ const CourseInitialization = inject('authStore')(
 											detect_changes={
 												!isBothArrayContainsTheSameElement(
 													mapArrayObjectToArrayWithStringKey(studiedList),
-													learnedCourses.split(',')
+													_learnedCourses.split(',')
 												)
 											}
 										/>
