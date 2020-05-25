@@ -53,25 +53,25 @@ const Action_Card_Holder = styled.div`
 
 const Card_Action_Main = styled.div`
 	width: 60rem;
-	height: 25rem;
+	height: 20rem;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 	text-align: center;
 	font-family: Rajdhani;
 
 	position: relative;
-	margin: 2rem;
+	margin: 2rem 0rem 0rem 2rem;
 	cursor: pointer;
 `;
 
 const Card_Action = styled.div`
-	width: 20rem;
-	height: 18rem;
+	width: 18rem;
+	height: 16rem;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 	text-align: center;
 	font-family: Rajdhani;
 
 	position: relative;
-	margin: 2rem;
+	margin: 0rem 2rem;
 	cursor: pointer;
 `;
 
