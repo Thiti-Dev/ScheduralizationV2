@@ -457,4 +457,22 @@ exports.deAssignSchedule = asyncHandler(async (req, res, next) => {
 	res.status(200).json({ success: true, data: schedule_remove });
 });
 
+// @desc    Get all of the courses that user scheduled
+// @route   GET /api/courses/myschedule
+// @acess   Private
+exports.getUserScheduledCourses = asyncHandler(async (req, res, next) => {
+	const scheduled_courses = await UserSchedule.findAll({
+		where: {
+			userId: req.user.id
+		},
+		include: [
+			{
+				model: Course,
+				as: 'courseData'
+			}
+		]
+	});
+	res.status(200).json({ success: true, data: scheduled_courses });
+});
+
 // ────────────────────────────────────────────────────────────────────────────────

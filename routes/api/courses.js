@@ -8,7 +8,8 @@ const {
 	scoreTheCourse,
 	getScoreAndDesc,
 	assignSchedule,
-	deAssignSchedule
+	deAssignSchedule,
+	getUserScheduledCourses
 } = require('../../controller/courses');
 
 const { protect } = require('../../middleware/auth');
@@ -21,4 +22,5 @@ router.route('/score/:courseID').post(protect, scoreTheCourse);
 router.route('/score/:courseID').get(getScoreAndDesc);
 
 router.route('/:courseID/assign').post(protect, assignSchedule).delete(protect, deAssignSchedule);
+router.route('/myschedule').get(protect, getUserScheduledCourses);
 module.exports = router;
