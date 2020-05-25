@@ -2,7 +2,7 @@ const crypto = require('crypto');
 
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
-const { User, CourseAvailable, Course, CourseScore, sequelize } = require('../models');
+const { User, CourseAvailable, Course, CourseScore, UserSchedule, sequelize } = require('../models');
 const { Op } = require('sequelize');
 
 //
@@ -202,3 +202,198 @@ exports.getScoreAndDesc = asyncHandler(async (req, res, next) => {
 	});
 	res.status(200).json({ success: true, data: course_score });
 });
+
+//
+// ─── SCHEDULE ───────────────────────────────────────────────────────────────────
+//
+
+//
+// ─── UTIL ───────────────────────────────────────────────────────────────────────
+//
+async function checkIfUserFreeAtPeriodOfTimeAndDay(start, end, day, userId) {
+	const user_scheudles = await UserSchedule.findAll({
+		where: {
+			userId
+		}
+	});
+
+	let is_free = true; // true by def
+
+	if (user_scheudles.length > 0) {
+		user_scheudles.forEach((data, index) => {
+			if (data.day === day) {
+				if (
+					(data.start <= start && data.end >= end) ||
+					(data.start >= start && data.end <= end) ||
+					(data.end > start && end >= data.end) ||
+					(data.start < end && start <= data.start)
+				) {
+					is_free = false;
+				}
+			}
+		});
+	}
+
+	return is_free;
+}
+// ────────────────────────────────────────────────────────────────────────────────
+
+// @desc    Assign a course for schedule
+// @route   POST /api/courses/:courseID/assign
+// @acess   Private
+exports.assignSchedule = asyncHandler(async (req, res, next) => {
+	const { courseID } = req.params;
+	const { section } = req.body;
+	const course_info = await CourseAvailable.findOne({
+		where: {
+			courseID,
+			section,
+			semester: req.user.semester
+		}
+	});
+	if (!course_info) {
+		return next(new ErrorResponse(`Courses ${courseID} with section ${section} isn't exist`, 404));
+	}
+	const consequence = await checkIfCourseHavingConsequenceOrNot(
+		courseID,
+		section,
+		course_info.start,
+		course_info.end,
+		req.user.semester
+	);
+
+	// if not found consequence => easily just create new data
+	if (!consequence) {
+		const course__scheduled_exist = await UserSchedule.findOne({
+			where: {
+				userId: req.user.id,
+				courseID,
+				day: course_info.day,
+				start: course_info.start,
+				end: course_info.end
+			}
+		});
+
+		// if already exist
+		if (course__scheduled_exist) {
+			return next(new ErrorResponse(`Already scheduled this course`, 400));
+		}
+
+		// CHECK IF USER IS FREE ON THAT DAY N TIME
+		const is_free = await checkIfUserFreeAtPeriodOfTimeAndDay(
+			course_info.start,
+			course_info.end,
+			course_info.day,
+			req.user.id
+		);
+
+		if (!is_free) {
+			return next(new ErrorResponse(`The user doesn't has any slot for this course`, 400));
+		}
+		// ─────────────────────────────────────────────────────────────────
+
+		let course_scheduled;
+
+		if (!course__scheduled_exist) {
+			course_scheduled = await UserSchedule.create({
+				courseID,
+				day: course_info.day,
+				start: course_info.start,
+				end: course_info.end,
+				userId: req.user.id
+			});
+		}
+		/*else {
+			course_scheduled = await course__scheduled_exist.update({
+				courseID,
+				day: course_info.day,
+				start: course_info.start,
+				end: course_info.end,
+				userId: req.user.id
+			});
+		}*/
+
+		return res.status(200).json({ success: true, data: course_scheduled, consequence: false });
+	} else {
+		// CHECK IF SCHEDULE EXIT (1) => based
+		const course__scheduled_exist = await UserSchedule.findOne({
+			where: {
+				userId: req.user.id,
+				courseID,
+				day: course_info.day,
+				start: course_info.start,
+				end: course_info.end
+			}
+		});
+		// CHECK IF SCHEDULE EXIT (1) => consequence
+		const course__scheduled_exist_cq = await UserSchedule.findOne({
+			where: {
+				userId: req.user.id,
+				courseID,
+				day: consequence.day,
+				start: consequence.start,
+				end: consequence.end
+			}
+		});
+
+		// If both seem to be existing in the record
+		if (course__scheduled_exist && course__scheduled_exist_cq) {
+			return next(new ErrorResponse(`Already scheduled this course`, 400));
+		}
+
+		// CHECK IF USER IS FREE ON THAT DAY N TIME
+		const is_free = await checkIfUserFreeAtPeriodOfTimeAndDay(
+			consequence.start,
+			consequence.end,
+			consequence.day,
+			req.user.id
+		);
+
+		if (!is_free) {
+			return next(new ErrorResponse(`The user doesn't has any slot for a consequence of this course`, 400));
+		}
+
+		// ─────────────────────────────────────────────────────────────────
+
+		// CLEANING EXIST
+		if (course__scheduled_exist) await course__scheduled_exist.destroy();
+		if (course__scheduled_exist_cq) await course__scheduled_exist_cq.destroy();
+		// ─────────────────────────────────────────────────────────────────
+
+		// BULK CREATE (AFTER CLEANED)
+		const courses_scheduled = await UserSchedule.bulkCreate([
+			{
+				courseID,
+				day: course_info.day,
+				start: course_info.start,
+				end: course_info.end,
+				userId: req.user.id
+			},
+			{
+				courseID,
+				day: consequence.day,
+				start: consequence.start,
+				end: consequence.end,
+				userId: req.user.id
+			}
+		]);
+
+		return res.status(200).json({ success: true, data: courses_scheduled, consequence: true });
+	}
+});
+
+// @desc    Remove the assign courses
+// @route   DELETE /api/courses/:courseID/assign
+// @acess   Private
+exports.deAssignSchedule = asyncHandler(async (req, res, next) => {
+	const { courseID } = req.params;
+	const schedule_remove = await UserSchedule.destroy({
+		where: {
+			userId: req.user.id,
+			courseID
+		}
+	});
+	res.status(200).json({ success: true, data: schedule_remove });
+});
+
+// ────────────────────────────────────────────────────────────────────────────────

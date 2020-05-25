@@ -6,7 +6,9 @@ const {
 	getSpecificCourseWithConsequence,
 	getAllAvailableCourses,
 	scoreTheCourse,
-	getScoreAndDesc
+	getScoreAndDesc,
+	assignSchedule,
+	deAssignSchedule
 } = require('../../controller/courses');
 
 const { protect } = require('../../middleware/auth');
@@ -17,4 +19,6 @@ router.route('/getSpecificCourseWithConsequence/:courseID').get(getSpecificCours
 
 router.route('/score/:courseID').post(protect, scoreTheCourse);
 router.route('/score/:courseID').get(getScoreAndDesc);
+
+router.route('/:courseID/assign').post(protect, assignSchedule).delete(protect, deAssignSchedule);
 module.exports = router;
