@@ -8,8 +8,8 @@ const { Op } = require('sequelize');
 //
 // ─── UTILS FUNCTION ─────────────────────────────────────────────────────────────
 //
-async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end, semester) {
-	const courses = await CourseAvailable.findAll({
+async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end, semester = 2) {
+	const courses = await CourseAvailable.findOne({
 		where: {
 			courseID,
 			section,
@@ -28,12 +28,12 @@ async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end
 			}
 		]
 	});
-	let result = false; // Initialize as false
+	/*let result = false; // Initialize as false
 	if (courses.length > 0) {
 		result = courses;
-	}
+	}*/
 
-	return result;
+	return courses;
 }
 
 function distinctArrayOfObject(_data, _distinct_key, based_key) {
