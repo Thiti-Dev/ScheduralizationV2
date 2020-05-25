@@ -225,35 +225,35 @@ const _user_assigned_course = [
 	{
 		courseID: 'LNG220',
 		courseName: 'Academic English',
-		day: 1, // 1 == Monday
+		day: 'จ.', // 1 == Monday
 		start: '08.30', // 8.30 AM
 		end: '11.30'
 	},
 	{
 		courseID: 'GEN111',
 		courseName: 'Man and Ethics of Living',
-		day: 1, // 1 == Monday
+		day: 'จ.', // 1 == Monday
 		start: '13.30', // 13.30 PM
 		end: '16.30'
 	},
 	{
 		courseID: 'CSS112',
 		courseName: 'Computer Programming I	',
-		day: 3, // 3 == Wednesday
+		day: 'พ.', // 3 == Wednesday
 		start: '09.00',
 		end: '12.00'
 	},
 	{
 		courseID: 'CSS322',
 		courseName: 'System Analysis and Design	',
-		day: 4, // 4 == Thursday
+		day: 'พฤ.', // 4 == Thursday
 		start: '10.00',
 		end: '11.30'
 	},
 	{
 		courseID: 'AWK101',
 		courseName: 'Learn how to be like thiti	',
-		day: 6, // 4 == Thursday
+		day: 'ส.', // 4 == Thursday
 		start: '09.00',
 		end: '14.20'
 	}
@@ -380,11 +380,11 @@ export default class Schedule extends Component {
 											if (index === 0) {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(1, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('จ.', value[1])}
 													>
 														<Day_Time_Holder>
 															{_user_assigned_course.map((courseData) => {
-																if (courseData.day === 1) {
+																if (courseData.day === 'จ.') {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
@@ -408,7 +408,7 @@ export default class Schedule extends Component {
 											} else {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(1, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('จ.', value[1])}
 													/>
 												);
 											}
@@ -420,11 +420,11 @@ export default class Schedule extends Component {
 											if (index === 0) {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(2, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('อ.', value[1])}
 													>
 														<Day_Time_Holder>
 															{_user_assigned_course.map((courseData) => {
-																if (courseData.day === 2) {
+																if (courseData.day === 'อ.') {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
@@ -448,7 +448,7 @@ export default class Schedule extends Component {
 											} else {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(2, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('อ.', value[1])}
 													/>
 												);
 											}
@@ -460,11 +460,11 @@ export default class Schedule extends Component {
 											if (index === 0) {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(3, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('พ.', value[1])}
 													>
 														<Day_Time_Holder>
 															{_user_assigned_course.map((courseData) => {
-																if (courseData.day === 3) {
+																if (courseData.day === 'พ.') {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
@@ -488,7 +488,7 @@ export default class Schedule extends Component {
 											} else {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(3, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('พ.', value[1])}
 													/>
 												);
 											}
@@ -500,11 +500,11 @@ export default class Schedule extends Component {
 											if (index === 0) {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(4, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('พฤ.', value[1])}
 													>
 														<Day_Time_Holder>
 															{_user_assigned_course.map((courseData) => {
-																if (courseData.day === 4) {
+																if (courseData.day === 'พฤ.') {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
@@ -528,7 +528,7 @@ export default class Schedule extends Component {
 											} else {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(4, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('พฤ.', value[1])}
 													/>
 												);
 											}
@@ -540,11 +540,11 @@ export default class Schedule extends Component {
 											if (index === 0) {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(5, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('ศ.', value[1])}
 													>
 														<Day_Time_Holder>
 															{_user_assigned_course.map((courseData) => {
-																if (courseData.day === 5) {
+																if (courseData.day === 'ศ.') {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
@@ -568,7 +568,7 @@ export default class Schedule extends Component {
 											} else {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(5, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('ศ.', value[1])}
 													/>
 												);
 											}
@@ -580,11 +580,11 @@ export default class Schedule extends Component {
 											if (index === 0) {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(6, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('ส.', value[1])}
 													>
 														<Day_Time_Holder>
 															{_user_assigned_course.map((courseData) => {
-																if (courseData.day === 6) {
+																if (courseData.day === 'ส.') {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
@@ -608,7 +608,7 @@ export default class Schedule extends Component {
 											} else {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(6, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('ส.', value[1])}
 													/>
 												);
 											}
@@ -620,11 +620,11 @@ export default class Schedule extends Component {
 											if (index === 0) {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(7, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('อา.', value[1])}
 													>
 														<Day_Time_Holder>
 															{_user_assigned_course.map((courseData) => {
-																if (courseData.day === 7) {
+																if (courseData.day === 'อา.') {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
@@ -648,7 +648,7 @@ export default class Schedule extends Component {
 											} else {
 												return (
 													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule(7, value[1])}
+														onClick={() => this.onSelectTimelineInSchedule('อา.', value[1])}
 													/>
 												);
 											}
