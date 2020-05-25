@@ -186,6 +186,7 @@ exports.getSpecificCourseWithConsequence = asyncHandler(async (req, res, next) =
 			)
 		);
 	}
+	let is_free = undefined;
 	const conflicted_data = await checkIfCourseHavingConsequenceOrNot(
 		courseID,
 		section,
@@ -193,7 +194,15 @@ exports.getSpecificCourseWithConsequence = asyncHandler(async (req, res, next) =
 		stop,
 		req.user.semester
 	);
-	res.status(200).json({ success: true, data: conflicted_data });
+	if (conflicted_data) {
+		is_free = await checkIfUserFreeAtPeriodOfTimeAndDay(
+			conflicted_data.start,
+			conflicted_data.end,
+			conflicted_data.day,
+			req.user.id
+		);
+	}
+	res.status(200).json({ success: true, data: conflicted_data, is_free });
 });
 
 // @desc    Give course a score&desc
@@ -315,11 +324,14 @@ function isAbleToRegisterTheCourse(required, learnedCourses) {
 // @acess   Private
 exports.assignSchedule = asyncHandler(async (req, res, next) => {
 	const { courseID } = req.params;
-	const { section } = req.body;
+	const { section, start, end, day } = req.body;
 	const course_info = await CourseAvailable.findOne({
 		where: {
 			courseID,
 			section,
+			start,
+			end,
+			day,
 			semester: req.user.semester
 		},
 		include: [
