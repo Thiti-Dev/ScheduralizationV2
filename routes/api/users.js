@@ -6,7 +6,8 @@ const {
 	updateStudiedCourses,
 	getStudiedCoursesdDataFromString,
 	initializeNewUser,
-	updateSpecificData
+	updateSpecificData,
+	getStudiedCoursesWithScoreData
 } = require('../../controller/users.js');
 
 const { protect } = require('../../middleware/auth');
@@ -15,6 +16,7 @@ router.route('/getSpecificData').get(protect, getSpecificData);
 router.route('/updateSpecificData').patch(protect, updateSpecificData);
 router.route('/updateStudiedCourses').put(protect, updateStudiedCourses);
 router.route('/getstudiedcoursesdatafromstring').post(getStudiedCoursesdDataFromString);
+router.route('/getstudiedcoursesdatafromstringwithscoredata').get(protect, getStudiedCoursesWithScoreData);
 router.route('/initialize').put(protect, initializeNewUser);
 
 module.exports = router;

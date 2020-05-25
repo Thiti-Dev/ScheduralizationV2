@@ -51,6 +51,18 @@ const Action_Card_Holder = styled.div`
 	flex-wrap: wrap; */
 `;
 
+const Card_Action_Main = styled.div`
+	width: 60rem;
+	height: 25rem;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+	text-align: center;
+	font-family: Rajdhani;
+
+	position: relative;
+	margin: 2rem;
+	cursor: pointer;
+`;
+
 const Card_Action = styled.div`
 	width: 20rem;
 	height: 18rem;
@@ -114,6 +126,18 @@ const Dashboard = inject('rootStore')(
 								avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
 							/>
 							<Action_Card_Holder>
+								<Card_Action_Main
+									className="hvr-grow"
+									onClick={() => {
+										this.props.history.push('schedule');
+										instantProcess();
+									}}
+								>
+									<Card_Action_Image img={schedule_img} />
+									<Card_Action_Text>Manage/View Schedule</Card_Action_Text>
+								</Card_Action_Main>
+							</Action_Card_Holder>
+							<Action_Card_Holder>
 								<Card_Action
 									className="hvr-grow"
 									onClick={() => {
@@ -124,20 +148,11 @@ const Dashboard = inject('rootStore')(
 									<Card_Action_Image img={courses_img} />
 									<Card_Action_Text>View all available courses</Card_Action_Text>
 								</Card_Action>
-								<Card_Action
-									className="hvr-grow"
-									onClick={() => {
-										this.props.history.push('schedule');
-										instantProcess();
-									}}
-								>
-									<Card_Action_Image img={schedule_img} />
-									<Card_Action_Text>Manage/View Schedule</Card_Action_Text>
-								</Card_Action>
-								<Card_Action className="hvr-grow">
+
+								{/* <Card_Action className="hvr-grow">
 									<Card_Action_Image img={find_img} />
 									<Card_Action_Text>Find people based on ur profession</Card_Action_Text>
-								</Card_Action>
+								</Card_Action> */}
 								<Card_Action
 									className="hvr-grow"
 									onClick={() => {
@@ -148,7 +163,13 @@ const Dashboard = inject('rootStore')(
 									<Card_Action_Image img={course_img} />
 									<Card_Action_Text>Add/Edit Studied Course</Card_Action_Text>
 								</Card_Action>
-								<Card_Action className="hvr-grow">
+								<Card_Action
+									className="hvr-grow"
+									onClick={() => {
+										this.props.history.push('coursescore');
+										instantProcess();
+									}}
+								>
 									<Card_Action_Image img={course_feedback_img} />
 									<Card_Action_Text>Course Scoring</Card_Action_Text>
 								</Card_Action>

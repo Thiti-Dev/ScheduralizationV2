@@ -1,0 +1,94 @@
+{
+	"dummy": [
+		{
+			"id": 134,
+			"courseID": "CSS111",
+			"courseName": "EXPLORING COMPUTER SCIENCE",
+			"required": null,
+			"credit": 4,
+			"createdAt": "2020-05-21T18:08:52.632Z",
+			"updatedAt": "2020-05-21T18:08:52.632Z",
+			"courseScoring": [
+				{
+					"id": 4,
+					"courseID": "CSS111",
+					"score": 5,
+					"description": "This course is superb",
+					"createdAt": "2020-05-24T19:27:16.185Z",
+					"updatedAt": "2020-05-24T19:27:16.185Z",
+					"userId": 1
+				}
+			]
+		},
+		{
+			"id": 135,
+			"courseID": "CSS112",
+			"courseName": "COMPUTER PROGRAMMING",
+			"required": null,
+			"credit": 3,
+			"createdAt": "2020-05-21T18:08:52.632Z",
+			"updatedAt": "2020-05-21T18:08:52.632Z",
+			"courseScoring": [
+				{
+					"id": 5,
+					"courseID": "CSS112",
+					"score": 3,
+					"description": "It's an ok course",
+					"createdAt": "2020-05-24T19:27:55.527Z",
+					"updatedAt": "2020-05-24T19:27:55.527Z",
+					"userId": 1
+				}
+			]
+		},
+		{
+			"id": 192,
+			"courseID": "CSS113",
+			"courseName": "INTRODUCTION TO COMPUTER AND DATA PROCESSING",
+			"required": null,
+			"credit": 3,
+			"createdAt": "2020-05-21T18:09:21.754Z",
+			"updatedAt": "2020-05-21T18:09:21.754Z",
+			"courseScoring": []
+		},
+		{
+			"id": 136,
+			"courseID": "CSS114",
+			"courseName": "ELEMENTARY COMPUTER PROGRAMMING",
+			"required": null,
+			"credit": 3,
+			"createdAt": "2020-05-21T18:08:52.632Z",
+			"updatedAt": "2020-05-21T18:08:52.632Z",
+			"courseScoring": []
+		},
+		{
+			"id": 138,
+			"courseID": "CSS222",
+			"courseName": "OBJECT-ORIENTED PROGRAMMING",
+			"required": "CSS112/CSS114",
+			"credit": 3,
+			"createdAt": "2020-05-21T18:08:52.632Z",
+			"updatedAt": "2020-05-21T18:08:52.632Z",
+			"courseScoring": []
+		},
+		{
+			"id": 139,
+			"courseID": "CSS223",
+			"courseName": "DATA STRUCTURES",
+			"required": "CSS112/CSS114",
+			"credit": 3,
+			"createdAt": "2020-05-21T18:08:52.632Z",
+			"updatedAt": "2020-05-21T18:08:52.632Z",
+			"courseScoring": []
+		},
+		{
+			"id": 195,
+			"courseID": "CSS224",
+			"courseName": "ALGORITHMS AND COMPLEXITY",
+			"required": "CSS223",
+			"credit": 3,
+			"createdAt": "2020-05-21T18:09:21.754Z",
+			"updatedAt": "2020-05-21T18:09:21.754Z",
+			"courseScoring": []
+		}
+	]
+}
