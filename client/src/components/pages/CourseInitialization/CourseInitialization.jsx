@@ -51,6 +51,12 @@ import Backend from 'react-dnd-html5-backend';
 // ────────────────────────────────────────────────────────────────────────────────
 import axios from 'axios';
 
+//
+// ─── HEADER ─────────────────────────────────────────────────────────────────────
+//
+import PageHeaderMain from '../../common/PageHeaderMain';
+// ────────────────────────────────────────────────────────────────────────────────
+
 const { Header, Content, Footer } = Layout;
 const { Paragraph } = Typography;
 const { Panel } = Collapse;
@@ -339,7 +345,7 @@ const CourseInitialization = inject('authStore')(
 							<GlobalStyle />
 							<Outer_Holder>
 								<Breadcrumb_Render history={this.props.history} />
-								<PageHeader
+								<PageHeaderMain
 									title="Thiti Mahawannakit"
 									className="site-page-header"
 									subTitle="60090500410"
@@ -404,7 +410,7 @@ const CourseInitialization = inject('authStore')(
 											}
 										/>
 									</div>
-								</PageHeader>
+								</PageHeaderMain>
 							</Outer_Holder>
 						</DndProvider>
 					</React.Fragment>

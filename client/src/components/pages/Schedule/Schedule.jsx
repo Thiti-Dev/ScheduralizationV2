@@ -47,6 +47,12 @@ import {
 } from './helper';
 // ────────────────────────────────────────────────────────────────────────────────
 
+//
+// ─── HEADER ─────────────────────────────────────────────────────────────────────
+//
+import PageHeaderMain from '../../common/PageHeaderMain';
+// ────────────────────────────────────────────────────────────────────────────────
+
 const { Header, Content, Footer } = Layout;
 const { Paragraph } = Typography;
 const { confirm } = Modal;
@@ -653,20 +659,7 @@ export default class Schedule extends Component {
 						/>
 					</Drawer>
 					<Breadcrumb_Render history={this.props.history} />
-					<PageHeader
-						title="Thiti Mahawannakit"
-						className="site-page-header"
-						subTitle="60090500410"
-						tags={<Tag color="blue">Student</Tag>}
-						extra={[
-							<Button key="3">Operation</Button>,
-							<Button key="2">Operation</Button>,
-							<Button key="1" type="ghost" danger>
-								Logout
-							</Button>
-						]}
-						avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
-					>
+					<PageHeaderMain>
 						<Schedule_Holder>
 							<Custom_Top_Table>
 								<thead>
@@ -1326,7 +1319,7 @@ export default class Schedule extends Component {
 								</thead>
 							</Custom_Bottom_Table>
 						</Schedule_Holder>
-					</PageHeader>
+					</PageHeaderMain>
 				</Outer_Holder>
 			</React.Fragment>
 		);

@@ -53,6 +53,12 @@ import { dummy } from './_data.json';
 import ScorePanel from './ScorePanel';
 // ────────────────────────────────────────────────────────────────────────────────
 
+//
+// ─── HEADER ─────────────────────────────────────────────────────────────────────
+//
+import PageHeaderMain from '../../common/PageHeaderMain';
+// ────────────────────────────────────────────────────────────────────────────────
+
 const { Header, Content, Footer } = Layout;
 const { Paragraph } = Typography;
 const { Search } = Input;
@@ -252,7 +258,7 @@ export default class CourseScore extends Component {
 						on_complete={this.onCompleteVoted}
 					/>
 					<Breadcrumb_Render history={this.props.history} />
-					<PageHeader
+					<PageHeaderMain
 						title="Thiti Mahawannakit"
 						className="site-page-header"
 						subTitle="60090500410"
@@ -273,7 +279,7 @@ export default class CourseScore extends Component {
 							bordered
 							size="large"
 						/>
-					</PageHeader>
+					</PageHeaderMain>
 				</Outer_Holder>
 			</React.Fragment>
 		);

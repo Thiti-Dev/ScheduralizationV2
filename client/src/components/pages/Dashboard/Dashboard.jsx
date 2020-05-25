@@ -20,6 +20,12 @@ import { EllipsisOutlined, HomeOutlined, UserOutlined, MenuOutlined, ScheduleOut
 
 import styled, { createGlobalStyle } from 'styled-components';
 
+//
+// ─── HEADER ─────────────────────────────────────────────────────────────────────
+//
+import PageHeaderMain from '../../common/PageHeaderMain';
+// ────────────────────────────────────────────────────────────────────────────────
+
 const { Header, Content, Footer } = Layout;
 const { Paragraph } = Typography;
 
@@ -111,20 +117,7 @@ const Dashboard = inject('rootStore')(
 						<GlobalStyle />
 						<Outer_Holder>
 							<Breadcrumb_Render />
-							<PageHeader
-								title="Thiti Mahawannakit"
-								className="site-page-header"
-								subTitle="60090500410"
-								tags={<Tag color="blue">Student</Tag>}
-								extra={[
-									<Button key="3">Operation</Button>,
-									<Button key="2">Operation</Button>,
-									<Button key="1" type="ghost" danger>
-										Logout
-									</Button>
-								]}
-								avatar={{ src: 'https://avatars1.githubusercontent.com/u/8186664?s=460&v=4' }}
-							/>
+							<PageHeaderMain />
 							<Action_Card_Holder>
 								<Card_Action_Main
 									className="hvr-grow"

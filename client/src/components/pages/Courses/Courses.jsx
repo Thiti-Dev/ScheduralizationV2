@@ -58,6 +58,12 @@ import { splitRequiredCourseToNormalizeText } from '../../../utils/stringNormali
 import CoursesLists from './CoursesList';
 // ────────────────────────────────────────────────────────────────────────────────
 
+//
+// ─── HEADER ─────────────────────────────────────────────────────────────────────
+//
+import PageHeaderMain from '../../common/PageHeaderMain';
+// ────────────────────────────────────────────────────────────────────────────────
+
 const { Header, Content, Footer } = Layout;
 const { Paragraph } = Typography;
 const { Panel } = Collapse;
@@ -235,7 +241,7 @@ export default class Courses extends Component {
 						/>
 					</Drawer>
 					<Breadcrumb_Render history={this.props.history} />
-					<PageHeader
+					<PageHeaderMain
 						title="Thiti Mahawannakit"
 						className="site-page-header"
 						subTitle="60090500410"
@@ -263,7 +269,7 @@ export default class Courses extends Component {
 								on_view_feedback={this.onViewFeedback}
 							/>
 						</div>
-					</PageHeader>
+					</PageHeaderMain>
 				</Outer_Holder>
 			</React.Fragment>
 		);
