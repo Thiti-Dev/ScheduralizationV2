@@ -36,6 +36,15 @@ async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end
 	return courses;
 }
 
+function filterOutTheCoursesThatAlreadyAssign(assign_courses, available_courses) {
+	const filtered_array = available_courses.filter((data) => {
+		if (assign_courses.includes(data.courseID)) return false;
+		return true;
+	});
+	return filtered_array;
+}
+// ────────────────────────────────────────────────────────────────────────────────
+
 function distinctArrayOfObject(_data, _distinct_key, based_key) {
 	const flagged_object_value = {}; // store an object
 	const filtered_data = [];
@@ -88,7 +97,7 @@ exports.getAllAvailableCourses = asyncHandler(async (req, res, next) => {
 
 // @desc    Get the available courses from the given timeslot (also semester => allowedGroup)
 // @route   GET /api/courses/getavailablebetweentime?start=10.30&end=12.30&semester=2&allowedGroup=CSS
-// @acess   Public
+// @acess   Private
 exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) => {
 	const { start, end, semester, allowedGroup } = req.query;
 
@@ -122,7 +131,9 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 		]
 	});
 	const finalized_available = distinctArrayOfObject(course, [ 'start', 'end', 'day' ], 'section');
-	res.status(200).json({ success: true, data: finalized_available });
+	const filtered_available = filterOutTheCoursesThatAlreadyAssign(req.user.learnedCourses, finalized_available);
+
+	res.status(200).json({ success: true, data: filtered_available });
 });
 
 // @desc    Get the consequence of the specific course
