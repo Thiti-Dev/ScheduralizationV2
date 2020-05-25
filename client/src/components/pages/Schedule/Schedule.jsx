@@ -224,38 +224,53 @@ const _user_assigned_course = [
 	// array of assigned courses
 	{
 		courseID: 'LNG220',
-		courseName: 'Academic English',
+
 		day: 'จ.', // 1 == Monday
 		start: '08.30', // 8.30 AM
-		end: '11.30'
+		end: '11.30',
+		courseData: {
+			courseName: 'Academic English'
+		}
 	},
 	{
 		courseID: 'GEN111',
-		courseName: 'Man and Ethics of Living',
+
 		day: 'จ.', // 1 == Monday
 		start: '13.30', // 13.30 PM
-		end: '16.30'
+		end: '16.30',
+		courseData: {
+			courseName: 'Man and Ethics of Living'
+		}
 	},
 	{
 		courseID: 'CSS112',
-		courseName: 'Computer Programming I	',
+
 		day: 'พ.', // 3 == Wednesday
 		start: '09.00',
-		end: '12.00'
+		end: '12.00',
+		courseData: {
+			courseName: 'Computer Programming I	'
+		}
 	},
 	{
 		courseID: 'CSS322',
-		courseName: 'System Analysis and Design	',
+
 		day: 'พฤ.', // 4 == Thursday
 		start: '10.00',
-		end: '11.30'
+		end: '11.30',
+		courseData: {
+			courseName: 'System Analysis and Design	'
+		}
 	},
 	{
 		courseID: 'AWK101',
-		courseName: 'Learn how to be like thiti	',
+
 		day: 'ส.', // 4 == Thursday
 		start: '09.00',
-		end: '14.20'
+		end: '14.20',
+		courseData: {
+			courseName: 'Learn how to be like thiti	'
+		}
 	}
 ];
 // ────────────────────────────────────────────────────────────────────────────────
@@ -395,7 +410,8 @@ export default class Schedule extends Component {
 																				<Day_Time_Course_Name>
 																					{courseData.courseID +
 																						' ' +
-																						courseData.courseName}
+																						courseData.courseData
+																							.courseName}
 																				</Day_Time_Course_Name>
 																			</Day_Time_Inside>
 																		</React.Fragment>
@@ -435,7 +451,8 @@ export default class Schedule extends Component {
 																				<Day_Time_Course_Name>
 																					{courseData.courseID +
 																						' ' +
-																						courseData.courseName}
+																						courseData.courseData
+																							.courseName}
 																				</Day_Time_Course_Name>
 																			</Day_Time_Inside>
 																		</React.Fragment>
@@ -475,7 +492,8 @@ export default class Schedule extends Component {
 																				<Day_Time_Course_Name>
 																					{courseData.courseID +
 																						' ' +
-																						courseData.courseName}
+																						courseData.courseData
+																							.courseName}
 																				</Day_Time_Course_Name>
 																			</Day_Time_Inside>
 																		</React.Fragment>
@@ -515,7 +533,8 @@ export default class Schedule extends Component {
 																				<Day_Time_Course_Name>
 																					{courseData.courseID +
 																						' ' +
-																						courseData.courseName}
+																						courseData.courseData
+																							.courseName}
 																				</Day_Time_Course_Name>
 																			</Day_Time_Inside>
 																		</React.Fragment>
@@ -555,7 +574,8 @@ export default class Schedule extends Component {
 																				<Day_Time_Course_Name>
 																					{courseData.courseID +
 																						' ' +
-																						courseData.courseName}
+																						courseData.courseData
+																							.courseName}
 																				</Day_Time_Course_Name>
 																			</Day_Time_Inside>
 																		</React.Fragment>
@@ -595,7 +615,8 @@ export default class Schedule extends Component {
 																				<Day_Time_Course_Name>
 																					{courseData.courseID +
 																						' ' +
-																						courseData.courseName}
+																						courseData.courseData
+																							.courseName}
 																				</Day_Time_Course_Name>
 																			</Day_Time_Inside>
 																		</React.Fragment>
@@ -635,7 +656,8 @@ export default class Schedule extends Component {
 																				<Day_Time_Course_Name>
 																					{courseData.courseID +
 																						' ' +
-																						courseData.courseName}
+																						courseData.courseData
+																							.courseName}
 																				</Day_Time_Course_Name>
 																			</Day_Time_Inside>
 																		</React.Fragment>
