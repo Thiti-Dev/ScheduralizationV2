@@ -534,10 +534,10 @@ export default class Schedule extends Component {
 			onCancel() {}
 		});
 	}
-	async assignCourse(c_id, section) {
+	async assignCourse(c_id, section, start, end, day) {
 		console.log('[ASSIGN]: CID: ' + c_id + ' SECTION: ' + section);
 		try {
-			const _res = await axios.post(`/api/courses/${c_id}/assign`, { section });
+			const _res = await axios.post(`/api/courses/${c_id}/assign`, { section, start, end, day });
 
 			// If assgin successfully
 			this.fetchUserScheduleData(); // re-fetch the user scheduled
@@ -545,28 +545,41 @@ export default class Schedule extends Component {
 			message.success(`Successfully added ${c_id} to your schedule`);
 		} catch (error) {}
 	}
-	async onAssignCourse(c_id, section, start, end) {
-		console.log('[DEBUG]: Trying to schedule ' + c_id + ' section ' + section);
+	async onAssignCourse(c_id, section, start, end, day) {
+		console.log('[DEBUG]: Trying to schedule ' + c_id + ' section ' + section + ' Day : ' + day);
 
 		//
 		// ─── CHECKING FOR CONSEQUENCE ────────────────────────────────────
 		//
 		try {
 			const _res = await axios.get(
-				`/api/courses/getSpecificCourseWithConsequence/${c_id}?section=${section}&start=${start}&stop=${end}`
+				`/api/courses/getSpecificCourseWithConsequence/${c_id}?section=${section}&start=${start}&stop=${end}&day=${day}`
 			);
 			const consequence = _res.data.data;
 			if (consequence) {
 				const { is_free } = _res.data;
 				console.log('[DEBUG]: Found consequence, user free => ' + is_free);
+				console.log(consequence);
 				if (is_free) {
-					this.assignCourse(c_id, section); // assign the course because user is free => no need to show modal message
+					this.assignCourse(c_id, section, start, end, day); // assign the course because user is free => no need to show modal message
 				} else {
 					// If user is not free for consequence course
+					Modal.error({
+						title: 'Cannot assign for course',
+						content: (
+							<React.Fragment>
+								<p>This course require available for sequence of class below</p>
+								<Badge
+									color="green"
+									text={`${consequence.day} ${consequence.start} ${consequence.end} ${consequence.classroom}`}
+								/>
+							</React.Fragment>
+						)
+					});
 				}
 			} else {
 				console.log('[DEBUG]: No consequence found');
-				this.assignCourse(c_id, section);
+				this.assignCourse(c_id, section, start, end, day);
 			}
 		} catch (error) {
 			//@TODO show error message
@@ -623,7 +636,13 @@ export default class Schedule extends Component {
 										<Button
 											type="ghost"
 											onClick={() =>
-												this.onAssignCourse(data.courseID, data.section, data.start, data.end)}
+												this.onAssignCourse(
+													data.courseID,
+													data.section,
+													data.start,
+													data.end,
+													data.day
+												)}
 										>
 											Pick course
 										</Button>
