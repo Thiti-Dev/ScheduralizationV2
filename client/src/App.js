@@ -23,6 +23,7 @@ import Schedule from './components/pages/Schedule';
 import Courses from './components/pages/Courses';
 import CourseInitialization from './components/pages/CourseInitialization';
 import CourseScore from './components/pages/CourseScore';
+import Profile from './components/pages/Profile';
 // ────────────────────────────────────────────────────────────────────────────────
 
 //
@@ -88,6 +89,7 @@ export default class App extends Component {
 						<PrivateRoute exact path="/courses" component={Courses} />
 						<PrivateRoute exact path="/courseinit" component={CourseInitialization} />
 						<PrivateRoute exact path="/coursescore" component={CourseScore} />
+						<PrivateRoute exact path="/profile" component={Profile} />
 						<PrivateRoute exact path="/schedule" component={Schedule} />
 					</Switch>
 				</Router>
