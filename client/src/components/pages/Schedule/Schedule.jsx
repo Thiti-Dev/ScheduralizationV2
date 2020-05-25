@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import axios from 'axios';
+
 // ─── ANTD ───────────────────────────────────────────────────────────────────────
 //
 import { Row, Col, Divider, Layout, Button, PageHeader, Menu, Dropdow, Tag, Typography, Breadcrumb } from 'antd';
@@ -280,10 +282,25 @@ export default class Schedule extends Component {
 		super(props);
 		this.state = {
 			// Yet still empty
+			schedule_courses: []
 		};
 		this.onSelectTimelineInSchedule = this.onSelectTimelineInSchedule.bind(this);
 	}
+	async fetchUserScheduleData() {
+		try {
+			const _res = await axios.get('/api/courses/myschedule');
+			const _schedule_data = _res.data.data;
+			this.setState({ schedule_courses: _schedule_data });
+		} catch (error) {
+			//@TODO show errors messages
+			console.log(error.response.data);
+		}
+	}
+	componentDidMount() {
+		this.fetchUserScheduleData();
+	}
 	onSelectTimelineInSchedule(day, start_time) {
+		const { schedule_courses } = this.state;
 		console.log('[DEBUG]: day = ' + day + ', start_time = ' + start_time);
 
 		//
@@ -306,7 +323,7 @@ export default class Schedule extends Component {
 			if (tranversal_started_time <= '08.00') {
 				safe_start_time = '08.00';
 			}
-			_user_assigned_course.every((courseData, index) => {
+			schedule_courses.every((courseData, index) => {
 				if (day === courseData.day) {
 					// do calc phase
 					if (courseData.end >= tranversal_started_time && courseData.end <= tranversal_boundary) {
@@ -327,7 +344,7 @@ export default class Schedule extends Component {
 			if (tranversal_started_time >= '18.00') {
 				safe_stop_time = '18.00';
 			}
-			_user_assigned_course.every((courseData, index) => {
+			schedule_courses.every((courseData, index) => {
 				if (day === courseData.day) {
 					// do calc phase
 					if (courseData.start >= tranversal_started_time && courseData.start <= tranversal_boundary) {
@@ -344,6 +361,7 @@ export default class Schedule extends Component {
 		console.log(safe_stop_time);
 	}
 	render() {
+		const { schedule_courses } = this.state;
 		return (
 			<React.Fragment>
 				<GlobalStyle />
@@ -398,7 +416,7 @@ export default class Schedule extends Component {
 														onClick={() => this.onSelectTimelineInSchedule('จ.', value[1])}
 													>
 														<Day_Time_Holder>
-															{_user_assigned_course.map((courseData) => {
+															{schedule_courses.map((courseData) => {
 																if (courseData.day === 'จ.') {
 																	return (
 																		<React.Fragment>
@@ -439,7 +457,7 @@ export default class Schedule extends Component {
 														onClick={() => this.onSelectTimelineInSchedule('อ.', value[1])}
 													>
 														<Day_Time_Holder>
-															{_user_assigned_course.map((courseData) => {
+															{schedule_courses.map((courseData) => {
 																if (courseData.day === 'อ.') {
 																	return (
 																		<React.Fragment>
@@ -480,7 +498,7 @@ export default class Schedule extends Component {
 														onClick={() => this.onSelectTimelineInSchedule('พ.', value[1])}
 													>
 														<Day_Time_Holder>
-															{_user_assigned_course.map((courseData) => {
+															{schedule_courses.map((courseData) => {
 																if (courseData.day === 'พ.') {
 																	return (
 																		<React.Fragment>
@@ -521,7 +539,7 @@ export default class Schedule extends Component {
 														onClick={() => this.onSelectTimelineInSchedule('พฤ.', value[1])}
 													>
 														<Day_Time_Holder>
-															{_user_assigned_course.map((courseData) => {
+															{schedule_courses.map((courseData) => {
 																if (courseData.day === 'พฤ.') {
 																	return (
 																		<React.Fragment>
@@ -562,7 +580,7 @@ export default class Schedule extends Component {
 														onClick={() => this.onSelectTimelineInSchedule('ศ.', value[1])}
 													>
 														<Day_Time_Holder>
-															{_user_assigned_course.map((courseData) => {
+															{schedule_courses.map((courseData) => {
 																if (courseData.day === 'ศ.') {
 																	return (
 																		<React.Fragment>
@@ -603,7 +621,7 @@ export default class Schedule extends Component {
 														onClick={() => this.onSelectTimelineInSchedule('ส.', value[1])}
 													>
 														<Day_Time_Holder>
-															{_user_assigned_course.map((courseData) => {
+															{schedule_courses.map((courseData) => {
 																if (courseData.day === 'ส.') {
 																	return (
 																		<React.Fragment>
@@ -644,7 +662,7 @@ export default class Schedule extends Component {
 														onClick={() => this.onSelectTimelineInSchedule('อา.', value[1])}
 													>
 														<Day_Time_Holder>
-															{_user_assigned_course.map((courseData) => {
+															{schedule_courses.map((courseData) => {
 																if (courseData.day === 'อา.') {
 																	return (
 																		<React.Fragment>
