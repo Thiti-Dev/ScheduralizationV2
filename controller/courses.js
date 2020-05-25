@@ -8,11 +8,12 @@ const { Op } = require('sequelize');
 //
 // ─── UTILS FUNCTION ─────────────────────────────────────────────────────────────
 //
-async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end) {
+async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end, semester) {
 	const courses = await CourseAvailable.findAll({
 		where: {
 			courseID,
 			section,
+			semester,
 			start: {
 				[Op.ne]: start
 			},
