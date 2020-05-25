@@ -99,27 +99,26 @@ exports.getAllAvailableCourses = asyncHandler(async (req, res, next) => {
 // @route   GET /api/courses/getavailablebetweentime?start=10.30&end=12.30&semester=2&allowedGroup=CSS
 // @acess   Private
 exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) => {
-	const { start, end, semester, allowedGroup } = req.query;
+	const { start, end, day } = req.query;
 
-	if (!start || !end || !semester || !allowedGroup) {
+	if (!start || !end || !day) {
 		return next(
-			new ErrorResponse(
-				`Invalid params, must have had start,end,semester,allowedGroup with the type of string as a query string`
-			)
+			new ErrorResponse(`Invalid params, must have had start,end,day with the type of string as a query string`)
 		);
 	}
 
 	const course = await CourseAvailable.findAll({
 		where: {
+			day,
 			start: {
 				[Op.gte]: start
 			},
 			end: {
 				[Op.lte]: end
 			},
-			semester,
+			semester: req.user.semester,
 			[Op.or]: [
-				{ allowedGroup: { [Op.like]: '%' + allowedGroup + '%' } },
+				{ allowedGroup: { [Op.like]: '%' + req.user.studentGroup + '%' } },
 				{ allowedGroup: { [Op.like]: '%' + 'OTHER' + '%' } }
 			]
 		},
