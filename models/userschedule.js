@@ -18,6 +18,14 @@ module.exports = (sequelize, DataTypes) => {
 			end: {
 				type: DataTypes.STRING,
 				allowNull: false
+			},
+			classroom: {
+				type: DataTypes.STRING,
+				allowNull: false
+			},
+			section: {
+				type: DataTypes.STRING,
+				allowNull: false
 			}
 		},
 		{}
