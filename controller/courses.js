@@ -34,6 +34,37 @@ async function checkIfCourseHavingConsequenceOrNot(courseID, section, start, end
 
 	return result;
 }
+
+function distinctArrayOfObject(_data, _distinct_key, based_key) {
+	const flagged_object_value = {}; // store an object
+	const filtered_data = [];
+	_data.forEach((data, index) => {
+		if (!flagged_object_value[data[based_key]]) {
+			flagged_object_value[data[based_key]] = {};
+			_distinct_key.forEach((_col) => {
+				flagged_object_value[data[based_key]][_col] = {}; // initialize entry for storing the flagged value
+			});
+		}
+	});
+
+	_data.forEach((data, index) => {
+		let found_flagged = true; // default true
+		_distinct_key.forEach((_col) => {
+			if (!flagged_object_value[data[based_key]][_col][data[_col]]) {
+				found_flagged = false;
+			}
+		});
+		if (!found_flagged) {
+			// push the one that isn't found flagged
+			filtered_data.push(data);
+			//flagged
+			_distinct_key.forEach((_col) => {
+				flagged_object_value[data[based_key]][_col][data[_col]] = true;
+			});
+		}
+	});
+	return filtered_data;
+}
 // ────────────────────────────────────────────────────────────────────────────────
 
 // @desc    Get all available courses that exist in the database
@@ -77,9 +108,10 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 				[Op.lte]: end
 			},
 			semester,
-			allowedGroup: {
-				[Op.like]: '%' + allowedGroup + '%'
-			}
+			[Op.or]: [
+				{ allowedGroup: { [Op.like]: '%' + allowedGroup + '%' } },
+				{ allowedGroup: { [Op.like]: '%' + 'OTHER' + '%' } }
+			]
 		},
 		include: [
 			{
@@ -88,7 +120,8 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 			}
 		]
 	});
-	res.status(200).json({ success: true, data: course });
+	const finalized_available = distinctArrayOfObject(course, [ 'start', 'end', 'day' ], 'section');
+	res.status(200).json({ success: true, data: finalized_available });
 });
 
 // @desc    Get the consequence of the specific course
