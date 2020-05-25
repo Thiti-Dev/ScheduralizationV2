@@ -43,7 +43,6 @@ function filterOutTheCoursesThatAlreadyAssign(assign_courses, available_courses)
 	});
 	return filtered_array;
 }
-// ────────────────────────────────────────────────────────────────────────────────
 
 function distinctArrayOfObject(_data, _distinct_key, based_key) {
 	const flagged_object_value = {}; // store an object
@@ -75,6 +74,32 @@ function distinctArrayOfObject(_data, _distinct_key, based_key) {
 	});
 	return filtered_data;
 }
+
+function combineConsequenceToSingleElement(base_array) {
+	const finalized_array = [];
+
+	base_array.forEach((data) => {
+		let sub_conseq = false;
+		finalized_array.forEach((_data, index) => {
+			if (!sub_conseq) {
+				if (
+					_data.semester === data.semester &&
+					_data.courseID === data.courseID &&
+					_data.section === data.section
+				) {
+					finalized_array[index].consequence_data = Object.assign({}, data);
+
+					sub_conseq = true;
+				}
+			}
+		});
+		if (!sub_conseq) {
+			finalized_array.push(data);
+		}
+	});
+	return finalized_array;
+}
+
 // ────────────────────────────────────────────────────────────────────────────────
 
 // @desc    Get all available courses that exist in the database
@@ -127,7 +152,9 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 				model: Course,
 				as: 'courseData'
 			}
-		]
+		],
+		raw: true,
+		nest: true
 	});
 	const finalized_available = distinctArrayOfObject(course, [ 'start', 'end', 'day' ], 'section');
 	const filtered_available = filterOutTheCoursesThatAlreadyAssign(req.user.learnedCourses, finalized_available);
@@ -140,8 +167,9 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 		}
 		return false;
 	});
+	const filtered_group_of_consequence = combineConsequenceToSingleElement(filtered_meet_requirement);
 
-	res.status(200).json({ success: true, data: filtered_meet_requirement });
+	res.status(200).json({ success: true, data: filtered_group_of_consequence });
 });
 
 // @desc    Get the consequence of the specific course
