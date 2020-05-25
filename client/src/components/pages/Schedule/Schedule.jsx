@@ -277,14 +277,20 @@ const _user_assigned_course = [
 ];
 // ────────────────────────────────────────────────────────────────────────────────
 
+function sleep(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export default class Schedule extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			// Yet still empty
-			schedule_courses: []
+			schedule_courses: [],
+			_delete: false
 		};
 		this.onSelectTimelineInSchedule = this.onSelectTimelineInSchedule.bind(this);
+		this.onDeleteAssignedCourse = this.onDeleteAssignedCourse.bind(this);
 	}
 	async fetchUserScheduleData() {
 		try {
@@ -299,7 +305,9 @@ export default class Schedule extends Component {
 	componentDidMount() {
 		this.fetchUserScheduleData();
 	}
-	onSelectTimelineInSchedule(day, start_time) {
+	async onSelectTimelineInSchedule(day, start_time) {
+		await sleep(200);
+		if (this.state._delete) return;
 		const { schedule_courses } = this.state;
 		console.log('[DEBUG]: day = ' + day + ', start_time = ' + start_time);
 
@@ -359,6 +367,13 @@ export default class Schedule extends Component {
 		// ─────────────────────────────────────────────────────────────────
 		console.log(safe_start_time);
 		console.log(safe_stop_time);
+	}
+	onDeleteAssignedCourse(c_id) {
+		console.log('[DEBUG]: Trying to delete course ' + c_id);
+		this.setState({ _delete: true }); // prevent get available course at time from calling
+		setTimeout(() => {
+			this.setState({ _delete: false }); // debounce
+		}, 500);
 	}
 	render() {
 		const { schedule_courses } = this.state;
@@ -462,6 +477,10 @@ export default class Schedule extends Component {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
+																				onClick={() =>
+																					this.onDeleteAssignedCourse(
+																						courseData.courseID
+																					)}
 																				hour={courseData.duration}
 																				start={courseData.start}
 																				end={courseData.end}
@@ -503,6 +522,10 @@ export default class Schedule extends Component {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
+																				onClick={() =>
+																					this.onDeleteAssignedCourse(
+																						courseData.courseID
+																					)}
 																				hour={courseData.duration}
 																				start={courseData.start}
 																				end={courseData.end}
@@ -544,6 +567,10 @@ export default class Schedule extends Component {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
+																				onClick={() =>
+																					this.onDeleteAssignedCourse(
+																						courseData.courseID
+																					)}
 																				hour={courseData.duration}
 																				start={courseData.start}
 																				end={courseData.end}
@@ -585,6 +612,10 @@ export default class Schedule extends Component {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
+																				onClick={() =>
+																					this.onDeleteAssignedCourse(
+																						courseData.courseID
+																					)}
 																				hour={courseData.duration}
 																				start={courseData.start}
 																				end={courseData.end}
@@ -626,6 +657,10 @@ export default class Schedule extends Component {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
+																				onClick={() =>
+																					this.onDeleteAssignedCourse(
+																						courseData.courseID
+																					)}
 																				hour={courseData.duration}
 																				start={courseData.start}
 																				end={courseData.end}
@@ -667,6 +702,10 @@ export default class Schedule extends Component {
 																	return (
 																		<React.Fragment>
 																			<Day_Time_Inside
+																				onClick={() =>
+																					this.onDeleteAssignedCourse(
+																						courseData.courseID
+																					)}
 																				hour={courseData.duration}
 																				start={courseData.start}
 																				end={courseData.end}
