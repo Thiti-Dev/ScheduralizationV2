@@ -132,7 +132,16 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 	const finalized_available = distinctArrayOfObject(course, [ 'start', 'end', 'day' ], 'section');
 	const filtered_available = filterOutTheCoursesThatAlreadyAssign(req.user.learnedCourses, finalized_available);
 
-	res.status(200).json({ success: true, data: filtered_available });
+	const _learnedCourses = req.user.learnedCourses;
+	const filtered_meet_requirement = filtered_available.filter((data) => {
+		if (!data.courseData.required) return true;
+		if (isAbleToRegisterTheCourse(data.courseData.required, _learnedCourses)) {
+			return true;
+		}
+		return false;
+	});
+
+	res.status(200).json({ success: true, data: filtered_meet_requirement });
 });
 
 // @desc    Get the consequence of the specific course
