@@ -20,7 +20,8 @@ import {
 	List,
 	Badge,
 	Modal,
-	message
+	message,
+	Popover
 } from 'antd';
 import {
 	EllipsisOutlined,
@@ -705,22 +706,66 @@ export default class Schedule extends Component {
 																if (courseData.day === 'จ.') {
 																	return (
 																		<React.Fragment>
-																			<Day_Time_Inside
-																				onClick={() =>
-																					this.onDeleteAssignedCourse(
-																						courseData.courseID
-																					)}
-																				hour={courseData.duration}
-																				start={courseData.start}
-																				end={courseData.end}
+																			<Popover
+																				content={
+																					<div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#76DA6B">
+																									time:
+																								</Tag>
+																							</span>
+																							{`${courseData.start} - ${courseData.end}`}
+																						</div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#bababa">
+																									section:
+																								</Tag>
+																							</span>
+																							{courseData.section}
+																						</div>
+
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#108ee9">
+																									room:
+																								</Tag>
+																							</span>
+																							{courseData.classroom}
+																						</div>
+																					</div>
+																				}
 																			>
-																				<Day_Time_Course_Name>
-																					{courseData.courseID +
-																						' ' +
-																						courseData.courseData
-																							.courseName}
-																				</Day_Time_Course_Name>
-																			</Day_Time_Inside>
+																				<Day_Time_Inside
+																					onClick={() =>
+																						this.onDeleteAssignedCourse(
+																							courseData.courseID
+																						)}
+																					hour={courseData.duration}
+																					start={courseData.start}
+																					end={courseData.end}
+																				>
+																					<Day_Time_Course_Name>
+																						{courseData.courseID +
+																							' ' +
+																							courseData.courseData
+																								.courseName}
+																					</Day_Time_Course_Name>
+																				</Day_Time_Inside>
+																			</Popover>
 																		</React.Fragment>
 																	);
 																}
@@ -750,22 +795,66 @@ export default class Schedule extends Component {
 																if (courseData.day === 'อ.') {
 																	return (
 																		<React.Fragment>
-																			<Day_Time_Inside
-																				onClick={() =>
-																					this.onDeleteAssignedCourse(
-																						courseData.courseID
-																					)}
-																				hour={courseData.duration}
-																				start={courseData.start}
-																				end={courseData.end}
+																			<Popover
+																				content={
+																					<div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#76DA6B">
+																									time:
+																								</Tag>
+																							</span>
+																							{`${courseData.start} - ${courseData.end}`}
+																						</div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#bababa">
+																									section:
+																								</Tag>
+																							</span>
+																							{courseData.section}
+																						</div>
+
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#108ee9">
+																									room:
+																								</Tag>
+																							</span>
+																							{courseData.classroom}
+																						</div>
+																					</div>
+																				}
 																			>
-																				<Day_Time_Course_Name>
-																					{courseData.courseID +
-																						' ' +
-																						courseData.courseData
-																							.courseName}
-																				</Day_Time_Course_Name>
-																			</Day_Time_Inside>
+																				<Day_Time_Inside
+																					onClick={() =>
+																						this.onDeleteAssignedCourse(
+																							courseData.courseID
+																						)}
+																					hour={courseData.duration}
+																					start={courseData.start}
+																					end={courseData.end}
+																				>
+																					<Day_Time_Course_Name>
+																						{courseData.courseID +
+																							' ' +
+																							courseData.courseData
+																								.courseName}
+																					</Day_Time_Course_Name>
+																				</Day_Time_Inside>
+																			</Popover>
 																		</React.Fragment>
 																	);
 																}
@@ -795,22 +884,66 @@ export default class Schedule extends Component {
 																if (courseData.day === 'พ.') {
 																	return (
 																		<React.Fragment>
-																			<Day_Time_Inside
-																				onClick={() =>
-																					this.onDeleteAssignedCourse(
-																						courseData.courseID
-																					)}
-																				hour={courseData.duration}
-																				start={courseData.start}
-																				end={courseData.end}
+																			<Popover
+																				content={
+																					<div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#76DA6B">
+																									time:
+																								</Tag>
+																							</span>
+																							{`${courseData.start} - ${courseData.end}`}
+																						</div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#bababa">
+																									section:
+																								</Tag>
+																							</span>
+																							{courseData.section}
+																						</div>
+
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#108ee9">
+																									room:
+																								</Tag>
+																							</span>
+																							{courseData.classroom}
+																						</div>
+																					</div>
+																				}
 																			>
-																				<Day_Time_Course_Name>
-																					{courseData.courseID +
-																						' ' +
-																						courseData.courseData
-																							.courseName}
-																				</Day_Time_Course_Name>
-																			</Day_Time_Inside>
+																				<Day_Time_Inside
+																					onClick={() =>
+																						this.onDeleteAssignedCourse(
+																							courseData.courseID
+																						)}
+																					hour={courseData.duration}
+																					start={courseData.start}
+																					end={courseData.end}
+																				>
+																					<Day_Time_Course_Name>
+																						{courseData.courseID +
+																							' ' +
+																							courseData.courseData
+																								.courseName}
+																					</Day_Time_Course_Name>
+																				</Day_Time_Inside>
+																			</Popover>
 																		</React.Fragment>
 																	);
 																}
@@ -840,22 +973,66 @@ export default class Schedule extends Component {
 																if (courseData.day === 'พฤ.') {
 																	return (
 																		<React.Fragment>
-																			<Day_Time_Inside
-																				onClick={() =>
-																					this.onDeleteAssignedCourse(
-																						courseData.courseID
-																					)}
-																				hour={courseData.duration}
-																				start={courseData.start}
-																				end={courseData.end}
+																			<Popover
+																				content={
+																					<div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#76DA6B">
+																									time:
+																								</Tag>
+																							</span>
+																							{`${courseData.start} - ${courseData.end}`}
+																						</div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#bababa">
+																									section:
+																								</Tag>
+																							</span>
+																							{courseData.section}
+																						</div>
+
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#108ee9">
+																									room:
+																								</Tag>
+																							</span>
+																							{courseData.classroom}
+																						</div>
+																					</div>
+																				}
 																			>
-																				<Day_Time_Course_Name>
-																					{courseData.courseID +
-																						' ' +
-																						courseData.courseData
-																							.courseName}
-																				</Day_Time_Course_Name>
-																			</Day_Time_Inside>
+																				<Day_Time_Inside
+																					onClick={() =>
+																						this.onDeleteAssignedCourse(
+																							courseData.courseID
+																						)}
+																					hour={courseData.duration}
+																					start={courseData.start}
+																					end={courseData.end}
+																				>
+																					<Day_Time_Course_Name>
+																						{courseData.courseID +
+																							' ' +
+																							courseData.courseData
+																								.courseName}
+																					</Day_Time_Course_Name>
+																				</Day_Time_Inside>
+																			</Popover>
 																		</React.Fragment>
 																	);
 																}
@@ -885,22 +1062,66 @@ export default class Schedule extends Component {
 																if (courseData.day === 'ศ.') {
 																	return (
 																		<React.Fragment>
-																			<Day_Time_Inside
-																				onClick={() =>
-																					this.onDeleteAssignedCourse(
-																						courseData.courseID
-																					)}
-																				hour={courseData.duration}
-																				start={courseData.start}
-																				end={courseData.end}
+																			<Popover
+																				content={
+																					<div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#76DA6B">
+																									time:
+																								</Tag>
+																							</span>
+																							{`${courseData.start} - ${courseData.end}`}
+																						</div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#bababa">
+																									section:
+																								</Tag>
+																							</span>
+																							{courseData.section}
+																						</div>
+
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#108ee9">
+																									room:
+																								</Tag>
+																							</span>
+																							{courseData.classroom}
+																						</div>
+																					</div>
+																				}
 																			>
-																				<Day_Time_Course_Name>
-																					{courseData.courseID +
-																						' ' +
-																						courseData.courseData
-																							.courseName}
-																				</Day_Time_Course_Name>
-																			</Day_Time_Inside>
+																				<Day_Time_Inside
+																					onClick={() =>
+																						this.onDeleteAssignedCourse(
+																							courseData.courseID
+																						)}
+																					hour={courseData.duration}
+																					start={courseData.start}
+																					end={courseData.end}
+																				>
+																					<Day_Time_Course_Name>
+																						{courseData.courseID +
+																							' ' +
+																							courseData.courseData
+																								.courseName}
+																					</Day_Time_Course_Name>
+																				</Day_Time_Inside>
+																			</Popover>
 																		</React.Fragment>
 																	);
 																}
@@ -930,22 +1151,66 @@ export default class Schedule extends Component {
 																if (courseData.day === 'ส.') {
 																	return (
 																		<React.Fragment>
-																			<Day_Time_Inside
-																				onClick={() =>
-																					this.onDeleteAssignedCourse(
-																						courseData.courseID
-																					)}
-																				hour={courseData.duration}
-																				start={courseData.start}
-																				end={courseData.end}
+																			<Popover
+																				content={
+																					<div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#76DA6B">
+																									time:
+																								</Tag>
+																							</span>
+																							{`${courseData.start} - ${courseData.end}`}
+																						</div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#bababa">
+																									section:
+																								</Tag>
+																							</span>
+																							{courseData.section}
+																						</div>
+
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#108ee9">
+																									room:
+																								</Tag>
+																							</span>
+																							{courseData.classroom}
+																						</div>
+																					</div>
+																				}
 																			>
-																				<Day_Time_Course_Name>
-																					{courseData.courseID +
-																						' ' +
-																						courseData.courseData
-																							.courseName}
-																				</Day_Time_Course_Name>
-																			</Day_Time_Inside>
+																				<Day_Time_Inside
+																					onClick={() =>
+																						this.onDeleteAssignedCourse(
+																							courseData.courseID
+																						)}
+																					hour={courseData.duration}
+																					start={courseData.start}
+																					end={courseData.end}
+																				>
+																					<Day_Time_Course_Name>
+																						{courseData.courseID +
+																							' ' +
+																							courseData.courseData
+																								.courseName}
+																					</Day_Time_Course_Name>
+																				</Day_Time_Inside>
+																			</Popover>
 																		</React.Fragment>
 																	);
 																}
@@ -975,22 +1240,66 @@ export default class Schedule extends Component {
 																if (courseData.day === 'อา.') {
 																	return (
 																		<React.Fragment>
-																			<Day_Time_Inside
-																				onClick={() =>
-																					this.onDeleteAssignedCourse(
-																						courseData.courseID
-																					)}
-																				hour={courseData.duration}
-																				start={courseData.start}
-																				end={courseData.end}
+																			<Popover
+																				content={
+																					<div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#76DA6B">
+																									time:
+																								</Tag>
+																							</span>
+																							{`${courseData.start} - ${courseData.end}`}
+																						</div>
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#bababa">
+																									section:
+																								</Tag>
+																							</span>
+																							{courseData.section}
+																						</div>
+
+																						<div
+																							style={{
+																								marginBottom: '0.2rem'
+																							}}
+																						>
+																							<span>
+																								<Tag color="#108ee9">
+																									room:
+																								</Tag>
+																							</span>
+																							{courseData.classroom}
+																						</div>
+																					</div>
+																				}
 																			>
-																				<Day_Time_Course_Name>
-																					{courseData.courseID +
-																						' ' +
-																						courseData.courseData
-																							.courseName}
-																				</Day_Time_Course_Name>
-																			</Day_Time_Inside>
+																				<Day_Time_Inside
+																					onClick={() =>
+																						this.onDeleteAssignedCourse(
+																							courseData.courseID
+																						)}
+																					hour={courseData.duration}
+																					start={courseData.start}
+																					end={courseData.end}
+																				>
+																					<Day_Time_Course_Name>
+																						{courseData.courseID +
+																							' ' +
+																							courseData.courseData
+																								.courseName}
+																					</Day_Time_Course_Name>
+																				</Day_Time_Inside>
+																			</Popover>
 																		</React.Fragment>
 																	);
 																}
