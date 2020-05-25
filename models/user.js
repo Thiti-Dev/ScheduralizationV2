@@ -81,7 +81,7 @@ module.exports = (sequelize, DataTypes) => {
 		return jwt.sign(
 			{
 				id: this.id,
-				email: this.username,
+				email: this.email,
 				studentID: this.studentID,
 				firstName: this.firstName,
 				lastName: this.lastName,
