@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { Spin, Space, Result } from 'antd';
+import { Spin, Space, Result, Button } from 'antd';
 import styled from 'styled-components';
 
 //
@@ -36,7 +36,10 @@ export default class ConfirmEmail extends Component {
 		//
 		// ─── CHECK IF CAME ACROSS VALID ──────────────────────────────────
 		//
-		console.log(this.props.location.state.email);
+		//console.log(this.props.location.state.email);
+		if (!this.props.location.state) {
+			return;
+		}
 		if (this.props.location.state.email) {
 			// valid
 			this.socketListening();
@@ -97,6 +100,9 @@ export default class ConfirmEmail extends Component {
 							title="Successfully Verified the email!"
 							subTitle="Welcome to Schedularization. Hoping you to have a great experience here and enjoy using our platform"
 						/>
+						<Button type="ghost" onClick={() => this.props.history.push('/')}>
+							Back to landing page
+						</Button>
 					</React.Fragment>
 				)}
 			</Outer_Holder>
