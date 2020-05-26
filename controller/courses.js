@@ -169,9 +169,9 @@ exports.getAvailableCourseBetweenTimeSlot = asyncHandler(async (req, res, next) 
 		nest: true
 	});
 	const finalized_available = distinctArrayOfObject(course, [ 'start', 'end', 'day' ], 'section');
-	const filtered_available = filterOutTheCoursesThatAlreadyAssign(req.user.learnedCourses, finalized_available);
+	const filtered_available = filterOutTheCoursesThatAlreadyAssign(req.user.learnedCourses || '', finalized_available);
 
-	const _learnedCourses = req.user.learnedCourses;
+	const _learnedCourses = req.user.learnedCourses || '';
 	const filtered_meet_requirement = filtered_available.filter((data) => {
 		if (!data.courseData.required) return true;
 		if (isAbleToRegisterTheCourse(data.courseData.required, _learnedCourses)) {

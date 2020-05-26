@@ -21,7 +21,8 @@ import {
 	Badge,
 	Modal,
 	message,
-	Popover
+	Popover,
+	Radio
 } from 'antd';
 import {
 	EllipsisOutlined,
@@ -29,7 +30,8 @@ import {
 	UserOutlined,
 	MenuOutlined,
 	ScheduleOutlined,
-	ExclamationCircleOutlined
+	ExclamationCircleOutlined,
+	BookFilled
 } from '@ant-design/icons';
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -423,13 +425,15 @@ const Schedule = inject('authStore')(
 					schedule_courses: [],
 					_delete: false,
 					panel_visible: false,
-					panel_extra: []
+					panel_extra: [],
+					filter: 'All'
 				};
 				this.onSelectTimelineInSchedule = this.onSelectTimelineInSchedule.bind(this);
 				this.onDeleteAssignedCourse = this.onDeleteAssignedCourse.bind(this);
 				this.onClosePanel = this.onClosePanel.bind(this);
 				this.onAssignCourse = this.onAssignCourse.bind(this);
 				this.assignCourse = this.assignCourse.bind(this);
+				this.onChangeFilter = this.onChangeFilter.bind(this);
 			}
 			async fetchUserScheduleData() {
 				try {
@@ -514,7 +518,7 @@ const Schedule = inject('authStore')(
 					const _res = await axios.get(
 						`/api/courses/getavailablebetweentime?start=${safe_start_time}&end=${safe_stop_time}&day=${day}`
 					);
-					this.setState({ panel_visible: true, panel_extra: _res.data.data });
+					this.setState({ panel_visible: true, panel_extra: _res.data.data, filter: 'All' });
 				} catch (error) {
 					//@TODO show error message
 					console.log(error.response.data);
@@ -607,14 +611,33 @@ const Schedule = inject('authStore')(
 			onClosePanel() {
 				this.setState({ panel_visible: false });
 			}
+			onChangeFilter(e) {
+				const { value } = e.target;
+				console.log('[FILTER]: Looking for ' + value);
+				this.setState({ filter: value });
+			}
 			render() {
-				const { schedule_courses, panel_visible, panel_extra } = this.state;
+				const { schedule_courses, panel_visible, panel_extra, filter } = this.state;
 				let year = '',
-					semester = '';
+					semester = '',
+					studentGroup = '';
 				if (this.props.authStore.userData) {
 					year = this.props.authStore.userData.year;
 					semester = this.props.authStore.userData.semester;
+					studentGroup = this.props.authStore.userData.studentGroup;
 				}
+				// Filter
+				let filtered_panel_extra;
+				if (filter !== 'All') {
+					filtered_panel_extra = panel_extra.filter((data) => {
+						if (data.courseID.includes(filter)) return true;
+						return false;
+					});
+				} else {
+					// No filter at all
+					filtered_panel_extra = panel_extra;
+				}
+				//
 				return (
 					<React.Fragment>
 						<GlobalStyle />
@@ -628,10 +651,53 @@ const Schedule = inject('authStore')(
 								visible={panel_visible}
 								key="right"
 							>
+								<Radio.Group
+									value={filter}
+									defaultValue="All"
+									buttonStyle="solid"
+									onChange={this.onChangeFilter}
+								>
+									<Radio.Button value="All">
+										{' '}
+										<a>
+											<BookFilled /> All
+										</a>
+									</Radio.Button>
+									<Radio.Button value={studentGroup}>
+										{' '}
+										<a>
+											<BookFilled /> {studentGroup}
+										</a>
+									</Radio.Button>
+									<Radio.Button value="LNG">
+										{' '}
+										<a>
+											<BookFilled /> LNG
+										</a>
+									</Radio.Button>
+									<Radio.Button value="MTH">
+										{' '}
+										<a>
+											<BookFilled /> MTH
+										</a>
+									</Radio.Button>
+									<Radio.Button value="GEN">
+										{' '}
+										<a>
+											<BookFilled /> GEN
+										</a>
+									</Radio.Button>
+									<Radio.Button value="SSC">
+										{' '}
+										<a>
+											<BookFilled /> SSC
+										</a>
+									</Radio.Button>
+								</Radio.Group>
 								<List
 									size="large"
 									bordered
-									dataSource={panel_extra}
+									dataSource={filtered_panel_extra}
 									renderItem={(data) => (
 										<List.Item>
 											<span>
