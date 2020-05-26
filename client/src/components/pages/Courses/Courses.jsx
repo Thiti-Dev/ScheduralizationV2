@@ -230,7 +230,7 @@ export default class Courses extends Component {
 											<React.Fragment>
 												{`${data.userData.firstName} ${data.userData.lastName}`}
 												<span style={{ marginLeft: '1rem' }}>
-													<Rate disabled defaultValue={data.score} />
+													<Rate disabled value={data.score} />
 												</span>
 											</React.Fragment>
 										}
