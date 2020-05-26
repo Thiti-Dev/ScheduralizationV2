@@ -1,6 +1,6 @@
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
-const { User, Course, CourseScore } = require('../models');
+const { User, Course, CourseScore, UserSchedule } = require('../models');
 
 //
 // ─── UTILS ──────────────────────────────────────────────────────────────────────
@@ -163,4 +163,37 @@ exports.getStudiedCoursesWithScoreData = asyncHandler(async (req, res, next) => 
 		]
 	});
 	res.status(200).json({ success: true, data: courses });
+});
+
+// @desc    Change year/semester
+// @route   PUT /api/users/switch
+// @acess   Private
+exports.changeYearAndSemester = asyncHandler(async (req, res, next) => {
+	const { year, semester } = req.body;
+	if (!year || !semester) {
+		return next(
+			new ErrorResponse(`To be initializing the user, year&semester must be passed into the request body`, 400)
+		);
+	}
+	const user = await User.findByPk(req.user.id);
+	if (!user) {
+		return next(new ErrorResponse(`Your account isn't found on the database`, 400));
+	}
+
+	// Updating
+	user.year = year;
+	user.semester = semester;
+	await user.save();
+	// ────────────────────────────────────────────────────────────────────────────────
+
+	// REMOVE ALL SCHEDULE
+	await UserSchedule.destroy({
+		where: {
+			userId: req.user.id
+		}
+	});
+	// --------------------
+
+	//res.status(200).json({ success: true });
+	sendTokenResponse(user, 200, res);
 });
