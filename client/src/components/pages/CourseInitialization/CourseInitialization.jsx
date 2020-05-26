@@ -17,7 +17,8 @@ import {
 	Breadcrumb,
 	Collapse,
 	List,
-	Input
+	Input,
+	notification
 } from 'antd';
 import {
 	EllipsisOutlined,
@@ -250,6 +251,17 @@ const CourseInitialization = inject('authStore')(
 			}
 			componentDidMount() {
 				this.fetchAllCourse();
+
+				if (this.props.location.state) {
+					if (this.props.location.state.new) {
+						notification.info({
+							message: `Instruction`,
+							description:
+								'You can simply drag the courses that you already studied from the left to the right panel.',
+							placement: 'topRight'
+						});
+					}
+				}
 			}
 			addCourseToStudiedlist(c_id, c_title) {
 				console.log('[ADD-TO-LIST]: Added ' + c_title);
