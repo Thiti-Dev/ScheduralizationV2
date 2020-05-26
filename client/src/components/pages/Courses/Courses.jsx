@@ -113,13 +113,26 @@ export default class Courses extends Component {
 			// none
 			search_str: '',
 			feedback_panel: false,
-			filter: 0 // default
+			filter: 0, // default
+			courses_data: []
 		};
 		this.onViewFeedback = this.onViewFeedback.bind(this);
 		this.onClose = this.onClose.bind(this);
 	}
+	async fetchAllCourse() {
+		try {
+			const _res = await axios.get('/api/courses');
+			// fetched successfully
+			const courses_data = _res.data.data;
+			this.setState({ courses_data });
+		} catch (error) {
+			//@TODO show error message
+			console.log(error.response.data);
+		}
+	}
 	componentDidMount() {
-		console.log(dummy);
+		//console.log(dummy);
+		this.fetchAllCourse();
 	}
 	async onViewFeedback(c_id) {
 		console.log('[DEBUG]: Trying to view feedback of ' + c_id);
@@ -138,7 +151,7 @@ export default class Courses extends Component {
 		this.setState({ feedback_panel: false });
 	}
 	render() {
-		const { search_str, feedback_panel, filter } = this.state;
+		const { search_str, feedback_panel, filter, courses_data } = this.state;
 		let filtered_feedback = [];
 		if (feedback_panel && filter !== 0) {
 			filtered_feedback = feedback_panel.filter((data) => {
@@ -264,7 +277,7 @@ export default class Courses extends Component {
 								style={{ width: '20rem', marginBottom: '2rem' }}
 							/>
 							<CoursesLists
-								coursesData={dummy}
+								coursesData={courses_data}
 								search_str={search_str}
 								on_view_feedback={this.onViewFeedback}
 							/>

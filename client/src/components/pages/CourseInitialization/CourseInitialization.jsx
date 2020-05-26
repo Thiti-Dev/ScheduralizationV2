@@ -236,17 +236,20 @@ const CourseInitialization = inject('authStore')(
 					console.log(error.response.data);
 				}
 			}
-			componentDidMount() {
-				if (dummy) {
-					this.setState(
-						{
-							allCoursesData: dummy
-						},
-						function() {
-							this.fetchLearnedCoursesData();
-						}
-					);
+			async fetchAllCourse() {
+				try {
+					const _res = await axios.get('/api/courses');
+					// fetched successfully
+					const courses_data = _res.data.data;
+					this.setState({ allCoursesData: courses_data });
+					this.fetchLearnedCoursesData();
+				} catch (error) {
+					//@TODO show error message
+					console.log(error.response.data);
 				}
+			}
+			componentDidMount() {
+				this.fetchAllCourse();
 			}
 			addCourseToStudiedlist(c_id, c_title) {
 				console.log('[ADD-TO-LIST]: Added ' + c_title);
