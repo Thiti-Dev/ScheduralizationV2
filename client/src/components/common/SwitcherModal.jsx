@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { inject, observer } from 'mobx-react';
-import { Modal, Button, Radio, Select, Affix } from 'antd';
+import { Modal, Button, Radio, Select, Affix, message } from 'antd';
 
 import { withRouter } from 'react-router-dom';
 
@@ -98,16 +98,32 @@ const SwitcherModal = inject('authStore')(
 					console.log('[DEBUG]: Detect changes');
 					this.setState({ is_requesting: true });
 					await doFakeLoadIfNeeded(); // doing fake load
+					const { _year, _semester } = this.state;
 					try {
-						const _res = axios.put('/api/users/switch', {
-							year: this.state._year,
-							semester: this.state._semester
+						const _res = await axios.put('/api/users/switch', {
+							year: _year,
+							semester: _semester
 						});
 						// If update sucessfully
-						window.location.reload(false); // reloading after the cookie is removed => automatically un-authenticated and will be redirecting to the login page
+
+						// Check if token has been passed
+						if (_res.data.token) {
+							this.props.authStore.updateUserDataFromToken(_res.data.token, (successfully) => {
+								message.success(`Successfully changing year to ${_year} and semester to ${_semester}`);
+								message.warning(
+									'All of your scheduled courses have been automatically removed by default'
+								);
+								setTimeout(() => {
+									window.location.reload(false); // reloading after the cookie is removed => automatically un-authenticated and will be redirecting to the login page
+								}, 2000);
+								this.props.on_close();
+							});
+						}
 					} catch (error) {
 						//@TODO send errors messages
 						console.log(error);
+					} finally {
+						this.setState({ is_requesting: false });
 					}
 				} else {
 					console.log('[DEBUG]: Dont Detect any changes');

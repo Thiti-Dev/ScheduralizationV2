@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import { inject, observer } from 'mobx-react';
 import axios from 'axios';
 
 // ─── ANTD ───────────────────────────────────────────────────────────────────────
@@ -217,6 +217,11 @@ const Schedule_Holder = styled.div`
 		}
 	}
 `;
+
+const Custom_Semester_Info = styled.p`
+	font-family: Rajdhani;
+	font-size: 2rem;
+`;
 // ────────────────────────────────────────────────────────────────────────────────
 
 const Breadcrumb_Render = ({ history }) => (
@@ -408,920 +413,994 @@ function sleep(ms) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export default class Schedule extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			// Yet still empty
-			schedule_courses: [],
-			_delete: false,
-			panel_visible: false,
-			panel_extra: []
-		};
-		this.onSelectTimelineInSchedule = this.onSelectTimelineInSchedule.bind(this);
-		this.onDeleteAssignedCourse = this.onDeleteAssignedCourse.bind(this);
-		this.onClosePanel = this.onClosePanel.bind(this);
-		this.onAssignCourse = this.onAssignCourse.bind(this);
-		this.assignCourse = this.assignCourse.bind(this);
-	}
-	async fetchUserScheduleData() {
-		try {
-			const _res = await axios.get('/api/courses/myschedule');
-			const _schedule_data = _res.data.data;
-			this.setState({ schedule_courses: _schedule_data });
-		} catch (error) {
-			//@TODO show errors messages
-			console.log(error.response.data);
-		}
-	}
-	componentDidMount() {
-		this.fetchUserScheduleData();
-	}
-	async onSelectTimelineInSchedule(day, start_time) {
-		await sleep(200);
-		if (this.state._delete) return;
-		const { schedule_courses } = this.state;
-		console.log('[DEBUG]: day = ' + day + ', start_time = ' + start_time);
-
-		//
-		// ─── TIME SLOT AVAILABLE CALCULATION ─────────────────────────────
-		//
-		// @ Iterating over the courses data by using every instead of forEach (Performance increment [ The iteration can be stopped ])
-		// @ REQUIRE 2 - CUSTOM MADE UTIL (minusHourExactNoAdditionalMinuteRemain,addHourExactNoAdditionalMinuteRemain) Created 8 Implemented by Thiti Mahawannakit
-		// @ This took me like 3 hrs to implement lel
-		// calculating available time in the selected slot
-		let safe_start_time = false,
-			safe_stop_time = false;
-
-		// Finding safestart
-		let decrement = -1;
-		while (!safe_start_time) {
-			decrement = decrement + 1;
-			const tranversal_started_time = minusHourExactNoAdditionalMinuteRemain(start_time, decrement);
-			const tranversal_boundary = addHourExactNoAdditionalMinuteRemain(tranversal_started_time, 1);
-			// Check if no before subject til the start of the day
-			if (tranversal_started_time <= '08.00') {
-				safe_start_time = '08.00';
+const Schedule = inject('authStore')(
+	observer(
+		class Schedule extends Component {
+			constructor(props) {
+				super(props);
+				this.state = {
+					// Yet still empty
+					schedule_courses: [],
+					_delete: false,
+					panel_visible: false,
+					panel_extra: []
+				};
+				this.onSelectTimelineInSchedule = this.onSelectTimelineInSchedule.bind(this);
+				this.onDeleteAssignedCourse = this.onDeleteAssignedCourse.bind(this);
+				this.onClosePanel = this.onClosePanel.bind(this);
+				this.onAssignCourse = this.onAssignCourse.bind(this);
+				this.assignCourse = this.assignCourse.bind(this);
 			}
-			schedule_courses.every((courseData, index) => {
-				if (day === courseData.day) {
-					// do calc phase
-					if (courseData.end >= tranversal_started_time && courseData.end <= tranversal_boundary) {
-						safe_start_time = courseData.end;
-						return false; //false to stop the loop
-					}
+			async fetchUserScheduleData() {
+				try {
+					const _res = await axios.get('/api/courses/myschedule');
+					const _schedule_data = _res.data.data;
+					this.setState({ schedule_courses: _schedule_data });
+				} catch (error) {
+					//@TODO show errors messages
+					console.log(error.response.data);
 				}
-				return true; // true to keep going
-			});
-		}
-
-		let increment = -1;
-		while (!safe_stop_time) {
-			increment = increment + 1;
-			const tranversal_started_time = addHourExactNoAdditionalMinuteRemain(safe_start_time, increment);
-			const tranversal_boundary = addHourExactNoAdditionalMinuteRemain(tranversal_started_time, 1);
-			// Check if no subject til the end of the day
-			if (tranversal_started_time >= '18.00') {
-				safe_stop_time = '18.00';
 			}
-			schedule_courses.every((courseData, index) => {
-				if (day === courseData.day) {
-					// do calc phase
-					if (courseData.start >= tranversal_started_time && courseData.start <= tranversal_boundary) {
-						safe_stop_time = courseData.start;
-						return false; //false to stop the loop
+			componentDidMount() {
+				this.fetchUserScheduleData();
+			}
+			async onSelectTimelineInSchedule(day, start_time) {
+				await sleep(200);
+				if (this.state._delete) return;
+				const { schedule_courses } = this.state;
+				console.log('[DEBUG]: day = ' + day + ', start_time = ' + start_time);
+
+				//
+				// ─── TIME SLOT AVAILABLE CALCULATION ─────────────────────────────
+				//
+				// @ Iterating over the courses data by using every instead of forEach (Performance increment [ The iteration can be stopped ])
+				// @ REQUIRE 2 - CUSTOM MADE UTIL (minusHourExactNoAdditionalMinuteRemain,addHourExactNoAdditionalMinuteRemain) Created 8 Implemented by Thiti Mahawannakit
+				// @ This took me like 3 hrs to implement lel
+				// calculating available time in the selected slot
+				let safe_start_time = false,
+					safe_stop_time = false;
+
+				// Finding safestart
+				let decrement = -1;
+				while (!safe_start_time) {
+					decrement = decrement + 1;
+					const tranversal_started_time = minusHourExactNoAdditionalMinuteRemain(start_time, decrement);
+					const tranversal_boundary = addHourExactNoAdditionalMinuteRemain(tranversal_started_time, 1);
+					// Check if no before subject til the start of the day
+					if (tranversal_started_time <= '08.00') {
+						safe_start_time = '08.00';
 					}
-				}
-				return true; // true to keep going
-			});
-		}
-
-		// ─────────────────────────────────────────────────────────────────
-		console.log(safe_start_time);
-		console.log(safe_stop_time);
-
-		try {
-			const _res = await axios.get(
-				`/api/courses/getavailablebetweentime?start=${safe_start_time}&end=${safe_stop_time}&day=${day}`
-			);
-			this.setState({ panel_visible: true, panel_extra: _res.data.data });
-		} catch (error) {
-			//@TODO show error message
-			console.log(error.response.data);
-		}
-	}
-	async onDeleteAssignedCourse(c_id) {
-		console.log('[DEBUG]: Trying to delete course ' + c_id);
-		this.setState({ _delete: true }); // prevent get available course at time from calling
-		setTimeout(() => {
-			this.setState({ _delete: false }); // debounce
-		}, 500);
-
-		let _this = this;
-		confirm({
-			title: `Do you want to remove ${c_id}?`,
-			icon: <ExclamationCircleOutlined />,
-			content: 'Removing schedule course can be done without causing any conflicts',
-			onOk() {
-				return new Promise(async (resolve, reject) => {
-					try {
-						const _res = await axios.delete(`/api/courses/${c_id}/assign`);
-
-						// If succesfully deleted
-						_this.fetchUserScheduleData(); // re-fetch the user scheduled
-						resolve();
-						message.success(`Successfully removed ${c_id} from your schedule`);
-					} catch (error) {
-						//@TODO show error message
-						console.log(error);
-						reject(`Error in deleting course`);
-					}
-				}).catch(() => console.log('Oops errors!'));
-			},
-			onCancel() {}
-		});
-	}
-	async assignCourse(c_id, section, start, end, day) {
-		console.log('[ASSIGN]: CID: ' + c_id + ' SECTION: ' + section);
-		try {
-			const _res = await axios.post(`/api/courses/${c_id}/assign`, { section, start, end, day });
-
-			// If assgin successfully
-			this.fetchUserScheduleData(); // re-fetch the user scheduled
-			this.onClosePanel();
-			message.success(`Successfully added ${c_id} to your schedule`);
-		} catch (error) {}
-	}
-	async onAssignCourse(c_id, section, start, end, day) {
-		console.log('[DEBUG]: Trying to schedule ' + c_id + ' section ' + section + ' Day : ' + day);
-
-		//
-		// ─── CHECKING FOR CONSEQUENCE ────────────────────────────────────
-		//
-		try {
-			const _res = await axios.get(
-				`/api/courses/getSpecificCourseWithConsequence/${c_id}?section=${section}&start=${start}&stop=${end}&day=${day}`
-			);
-			const consequence = _res.data.data;
-			if (consequence) {
-				const { is_free } = _res.data;
-				console.log('[DEBUG]: Found consequence, user free => ' + is_free);
-				console.log(consequence);
-				if (is_free) {
-					this.assignCourse(c_id, section, start, end, day); // assign the course because user is free => no need to show modal message
-				} else {
-					// If user is not free for consequence course
-					Modal.error({
-						title: 'Cannot assign for course',
-						content: (
-							<React.Fragment>
-								<p>This course require available for sequence of class below</p>
-								<Badge
-									color="green"
-									text={`${consequence.day} ${consequence.start} ${consequence.end} ${consequence.classroom}`}
-								/>
-							</React.Fragment>
-						)
+					schedule_courses.every((courseData, index) => {
+						if (day === courseData.day) {
+							// do calc phase
+							if (courseData.end >= tranversal_started_time && courseData.end <= tranversal_boundary) {
+								safe_start_time = courseData.end;
+								return false; //false to stop the loop
+							}
+						}
+						return true; // true to keep going
 					});
 				}
-			} else {
-				console.log('[DEBUG]: No consequence found');
-				this.assignCourse(c_id, section, start, end, day);
+
+				let increment = -1;
+				while (!safe_stop_time) {
+					increment = increment + 1;
+					const tranversal_started_time = addHourExactNoAdditionalMinuteRemain(safe_start_time, increment);
+					const tranversal_boundary = addHourExactNoAdditionalMinuteRemain(tranversal_started_time, 1);
+					// Check if no subject til the end of the day
+					if (tranversal_started_time >= '18.00') {
+						safe_stop_time = '18.00';
+					}
+					schedule_courses.every((courseData, index) => {
+						if (day === courseData.day) {
+							// do calc phase
+							if (
+								courseData.start >= tranversal_started_time &&
+								courseData.start <= tranversal_boundary
+							) {
+								safe_stop_time = courseData.start;
+								return false; //false to stop the loop
+							}
+						}
+						return true; // true to keep going
+					});
+				}
+
+				// ─────────────────────────────────────────────────────────────────
+				console.log(safe_start_time);
+				console.log(safe_stop_time);
+
+				try {
+					const _res = await axios.get(
+						`/api/courses/getavailablebetweentime?start=${safe_start_time}&end=${safe_stop_time}&day=${day}`
+					);
+					this.setState({ panel_visible: true, panel_extra: _res.data.data });
+				} catch (error) {
+					//@TODO show error message
+					console.log(error.response.data);
+				}
 			}
-		} catch (error) {
-			//@TODO show error message
-			console.log(error);
-		}
-		// ─────────────────────────────────────────────────────────────────
-	}
-	onClosePanel() {
-		this.setState({ panel_visible: false });
-	}
-	render() {
-		const { schedule_courses, panel_visible, panel_extra } = this.state;
-		return (
-			<React.Fragment>
-				<GlobalStyle />
-				<Outer_Holder>
-					<Drawer
-						width={500}
-						title="Available Courses"
-						placement="right"
-						closable={true}
-						onClose={this.onClosePanel}
-						visible={panel_visible}
-						key="right"
-					>
-						<List
-							size="large"
-							bordered
-							dataSource={panel_extra}
-							renderItem={(data) => (
-								<List.Item>
-									<span>
-										<Tag color="#108ee9">section:{data.section}</Tag>
-									</span>
-									{`${data.courseID} ${data.courseData.courseName}`}
-									<br />
-									<Badge
-										color="green"
-										text={`${data.day} ${data.start} ${data.end} ${data.classroom}`}
-									/>
-									{data.consequence_data ? (
-										<React.Fragment>
+			async onDeleteAssignedCourse(c_id) {
+				console.log('[DEBUG]: Trying to delete course ' + c_id);
+				this.setState({ _delete: true }); // prevent get available course at time from calling
+				setTimeout(() => {
+					this.setState({ _delete: false }); // debounce
+				}, 500);
+
+				let _this = this;
+				confirm({
+					title: `Do you want to remove ${c_id}?`,
+					icon: <ExclamationCircleOutlined />,
+					content: 'Removing schedule course can be done without causing any conflicts',
+					onOk() {
+						return new Promise(async (resolve, reject) => {
+							try {
+								const _res = await axios.delete(`/api/courses/${c_id}/assign`);
+
+								// If succesfully deleted
+								_this.fetchUserScheduleData(); // re-fetch the user scheduled
+								resolve();
+								message.success(`Successfully removed ${c_id} from your schedule`);
+							} catch (error) {
+								//@TODO show error message
+								console.log(error);
+								reject(`Error in deleting course`);
+							}
+						}).catch(() => console.log('Oops errors!'));
+					},
+					onCancel() {}
+				});
+			}
+			async assignCourse(c_id, section, start, end, day) {
+				console.log('[ASSIGN]: CID: ' + c_id + ' SECTION: ' + section);
+				try {
+					const _res = await axios.post(`/api/courses/${c_id}/assign`, { section, start, end, day });
+
+					// If assgin successfully
+					this.fetchUserScheduleData(); // re-fetch the user scheduled
+					this.onClosePanel();
+					message.success(`Successfully added ${c_id} to your schedule`);
+				} catch (error) {}
+			}
+			async onAssignCourse(c_id, section, start, end, day) {
+				console.log('[DEBUG]: Trying to schedule ' + c_id + ' section ' + section + ' Day : ' + day);
+
+				//
+				// ─── CHECKING FOR CONSEQUENCE ────────────────────────────────────
+				//
+				try {
+					const _res = await axios.get(
+						`/api/courses/getSpecificCourseWithConsequence/${c_id}?section=${section}&start=${start}&stop=${end}&day=${day}`
+					);
+					const consequence = _res.data.data;
+					if (consequence) {
+						const { is_free } = _res.data;
+						console.log('[DEBUG]: Found consequence, user free => ' + is_free);
+						console.log(consequence);
+						if (is_free) {
+							this.assignCourse(c_id, section, start, end, day); // assign the course because user is free => no need to show modal message
+						} else {
+							// If user is not free for consequence course
+							Modal.error({
+								title: 'Cannot assign for course',
+								content: (
+									<React.Fragment>
+										<p>This course require available for sequence of class below</p>
+										<Badge
+											color="green"
+											text={`${consequence.day} ${consequence.start} ${consequence.end} ${consequence.classroom}`}
+										/>
+									</React.Fragment>
+								)
+							});
+						}
+					} else {
+						console.log('[DEBUG]: No consequence found');
+						this.assignCourse(c_id, section, start, end, day);
+					}
+				} catch (error) {
+					//@TODO show error message
+					console.log(error);
+				}
+				// ─────────────────────────────────────────────────────────────────
+			}
+			onClosePanel() {
+				this.setState({ panel_visible: false });
+			}
+			render() {
+				const { schedule_courses, panel_visible, panel_extra } = this.state;
+				let year = '',
+					semester = '';
+				if (this.props.authStore.userData) {
+					year = this.props.authStore.userData.year;
+					semester = this.props.authStore.userData.semester;
+				}
+				return (
+					<React.Fragment>
+						<GlobalStyle />
+						<Outer_Holder>
+							<Drawer
+								width={500}
+								title="Available Courses"
+								placement="right"
+								closable={true}
+								onClose={this.onClosePanel}
+								visible={panel_visible}
+								key="right"
+							>
+								<List
+									size="large"
+									bordered
+									dataSource={panel_extra}
+									renderItem={(data) => (
+										<List.Item>
+											<span>
+												<Tag color="#108ee9">section:{data.section}</Tag>
+											</span>
+											{`${data.courseID} ${data.courseData.courseName}`}
 											<br />
 											<Badge
 												color="green"
-												text={`${data.consequence_data.day} ${data.consequence_data
-													.start} ${data.consequence_data.end} ${data.consequence_data
-													.classroom}`}
+												text={`${data.day} ${data.start} ${data.end} ${data.classroom}`}
 											/>
-										</React.Fragment>
-									) : null}
-									<br />
-									<div style={{ textAlign: 'right' }}>
-										<Button
-											type="ghost"
-											onClick={() =>
-												this.onAssignCourse(
-													data.courseID,
-													data.section,
-													data.start,
-													data.end,
-													data.day
-												)}
-										>
-											Pick course
-										</Button>
-									</div>
-								</List.Item>
-							)}
-						/>
-					</Drawer>
-					<Breadcrumb_Render history={this.props.history} />
-					<PageHeaderMain>
-						<Schedule_Holder>
-							<Custom_Top_Table>
-								<thead>
-									<tr>
-										<Custom_Main_Th>My schedule</Custom_Main_Th>
-									</tr>
-								</thead>
-							</Custom_Top_Table>
-							<Custom_Table>
-								<thead>
-									<tr>
-										<Custom_Th>Day</Custom_Th>
-										<Custom_Th>08.00 AM</Custom_Th>
-										<Custom_Th>09.00 AM</Custom_Th>
-										<Custom_Th>10.00 AM</Custom_Th>
-										<Custom_Th>11.00 AM</Custom_Th>
-										<Custom_Th>12.00 PM</Custom_Th>
-										<Custom_Th>1.00 PM</Custom_Th>
-										<Custom_Th>2.00 PM</Custom_Th>
-										<Custom_Th>3.00 PM</Custom_Th>
-										<Custom_Th>4.00 PM</Custom_Th>
-										<Custom_Th>5.00 PM</Custom_Th>
-										<Custom_Th>6.00 PM</Custom_Th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<Custom_Day_Td>Monday</Custom_Day_Td>
-										{normal_time_slot.map((value, index) => {
-											if (index === 0) {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('จ.', value[1])}
-													>
-														<Day_Time_Holder>
-															{schedule_courses.map((courseData) => {
-																if (courseData.day === 'จ.') {
-																	return (
-																		<React.Fragment>
-																			<Popover
-																				content={
-																					<div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#76DA6B">
-																									time:
-																								</Tag>
-																							</span>
-																							{`${courseData.start} - ${courseData.end}`}
-																						</div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#bababa">
-																									section:
-																								</Tag>
-																							</span>
-																							{courseData.section}
-																						</div>
-
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#108ee9">
-																									room:
-																								</Tag>
-																							</span>
-																							{courseData.classroom}
-																						</div>
-																					</div>
-																				}
-																			>
-																				<Day_Time_Inside
-																					onClick={() =>
-																						this.onDeleteAssignedCourse(
-																							courseData.courseID
-																						)}
-																					hour={courseData.duration}
-																					start={courseData.start}
-																					end={courseData.end}
-																				>
-																					<Day_Time_Course_Name>
-																						{courseData.courseID +
-																							' ' +
-																							courseData.courseData
-																								.courseName}
-																					</Day_Time_Course_Name>
-																				</Day_Time_Inside>
-																			</Popover>
-																		</React.Fragment>
-																	);
-																}
-															})}
-														</Day_Time_Holder>
-													</Custom_Td>
-												);
-											} else {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('จ.', value[1])}
+											{data.consequence_data ? (
+												<React.Fragment>
+													<br />
+													<Badge
+														color="green"
+														text={`${data.consequence_data.day} ${data.consequence_data
+															.start} ${data.consequence_data.end} ${data.consequence_data
+															.classroom}`}
 													/>
-												);
-											}
-										})}
-									</tr>
-									<tr>
-										<Custom_Day_Td>Tuesday</Custom_Day_Td>
-										{normal_time_slot.map((value, index) => {
-											if (index === 0) {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('อ.', value[1])}
-													>
-														<Day_Time_Holder>
-															{schedule_courses.map((courseData) => {
-																if (courseData.day === 'อ.') {
-																	return (
-																		<React.Fragment>
-																			<Popover
-																				content={
-																					<div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#76DA6B">
-																									time:
-																								</Tag>
-																							</span>
-																							{`${courseData.start} - ${courseData.end}`}
-																						</div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#bababa">
-																									section:
-																								</Tag>
-																							</span>
-																							{courseData.section}
-																						</div>
+												</React.Fragment>
+											) : null}
+											<br />
+											<div style={{ textAlign: 'right' }}>
+												<Button
+													type="ghost"
+													onClick={() =>
+														this.onAssignCourse(
+															data.courseID,
+															data.section,
+															data.start,
+															data.end,
+															data.day
+														)}
+												>
+													Pick course
+												</Button>
+											</div>
+										</List.Item>
+									)}
+								/>
+							</Drawer>
+							<Breadcrumb_Render history={this.props.history} />
+							<PageHeaderMain>
+								<Schedule_Holder>
+									<Custom_Semester_Info style={{ textAlign: 'center' }}>
+										Year {year} Semester {semester}
+									</Custom_Semester_Info>
+									<Custom_Top_Table>
+										<thead>
+											<tr>
+												<Custom_Main_Th>My schedule</Custom_Main_Th>
+											</tr>
+										</thead>
+									</Custom_Top_Table>
+									<Custom_Table>
+										<thead>
+											<tr>
+												<Custom_Th>Day</Custom_Th>
+												<Custom_Th>08.00 AM</Custom_Th>
+												<Custom_Th>09.00 AM</Custom_Th>
+												<Custom_Th>10.00 AM</Custom_Th>
+												<Custom_Th>11.00 AM</Custom_Th>
+												<Custom_Th>12.00 PM</Custom_Th>
+												<Custom_Th>1.00 PM</Custom_Th>
+												<Custom_Th>2.00 PM</Custom_Th>
+												<Custom_Th>3.00 PM</Custom_Th>
+												<Custom_Th>4.00 PM</Custom_Th>
+												<Custom_Th>5.00 PM</Custom_Th>
+												<Custom_Th>6.00 PM</Custom_Th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<Custom_Day_Td>Monday</Custom_Day_Td>
+												{normal_time_slot.map((value, index) => {
+													if (index === 0) {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('จ.', value[1])}
+															>
+																<Day_Time_Holder>
+																	{schedule_courses.map((courseData) => {
+																		if (courseData.day === 'จ.') {
+																			return (
+																				<React.Fragment>
+																					<Popover
+																						content={
+																							<div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#76DA6B">
+																											time:
+																										</Tag>
+																									</span>
+																									{`${courseData.start} - ${courseData.end}`}
+																								</div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#bababa">
+																											section:
+																										</Tag>
+																									</span>
+																									{courseData.section}
+																								</div>
 
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#108ee9">
+																											room:
+																										</Tag>
+																									</span>
+																									{
+																										courseData.classroom
+																									}
+																								</div>
+																							</div>
+																						}
+																					>
+																						<Day_Time_Inside
+																							onClick={() =>
+																								this.onDeleteAssignedCourse(
+																									courseData.courseID
+																								)}
+																							hour={courseData.duration}
+																							start={courseData.start}
+																							end={courseData.end}
 																						>
-																							<span>
-																								<Tag color="#108ee9">
-																									room:
-																								</Tag>
-																							</span>
-																							{courseData.classroom}
-																						</div>
-																					</div>
-																				}
-																			>
-																				<Day_Time_Inside
-																					onClick={() =>
-																						this.onDeleteAssignedCourse(
-																							courseData.courseID
-																						)}
-																					hour={courseData.duration}
-																					start={courseData.start}
-																					end={courseData.end}
-																				>
-																					<Day_Time_Course_Name>
-																						{courseData.courseID +
-																							' ' +
-																							courseData.courseData
-																								.courseName}
-																					</Day_Time_Course_Name>
-																				</Day_Time_Inside>
-																			</Popover>
-																		</React.Fragment>
-																	);
-																}
-															})}
-														</Day_Time_Holder>
-													</Custom_Td>
-												);
-											} else {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('อ.', value[1])}
-													/>
-												);
-											}
-										})}
-									</tr>
-									<tr>
-										<Custom_Day_Td>Wednesday</Custom_Day_Td>
-										{normal_time_slot.map((value, index) => {
-											if (index === 0) {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('พ.', value[1])}
-													>
-														<Day_Time_Holder>
-															{schedule_courses.map((courseData) => {
-																if (courseData.day === 'พ.') {
-																	return (
-																		<React.Fragment>
-																			<Popover
-																				content={
-																					<div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#76DA6B">
-																									time:
-																								</Tag>
-																							</span>
-																							{`${courseData.start} - ${courseData.end}`}
-																						</div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#bababa">
-																									section:
-																								</Tag>
-																							</span>
-																							{courseData.section}
-																						</div>
+																							<Day_Time_Course_Name>
+																								{courseData.courseID +
+																									' ' +
+																									courseData
+																										.courseData
+																										.courseName}
+																							</Day_Time_Course_Name>
+																						</Day_Time_Inside>
+																					</Popover>
+																				</React.Fragment>
+																			);
+																		}
+																	})}
+																</Day_Time_Holder>
+															</Custom_Td>
+														);
+													} else {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('จ.', value[1])}
+															/>
+														);
+													}
+												})}
+											</tr>
+											<tr>
+												<Custom_Day_Td>Tuesday</Custom_Day_Td>
+												{normal_time_slot.map((value, index) => {
+													if (index === 0) {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('อ.', value[1])}
+															>
+																<Day_Time_Holder>
+																	{schedule_courses.map((courseData) => {
+																		if (courseData.day === 'อ.') {
+																			return (
+																				<React.Fragment>
+																					<Popover
+																						content={
+																							<div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#76DA6B">
+																											time:
+																										</Tag>
+																									</span>
+																									{`${courseData.start} - ${courseData.end}`}
+																								</div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#bababa">
+																											section:
+																										</Tag>
+																									</span>
+																									{courseData.section}
+																								</div>
 
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#108ee9">
+																											room:
+																										</Tag>
+																									</span>
+																									{
+																										courseData.classroom
+																									}
+																								</div>
+																							</div>
+																						}
+																					>
+																						<Day_Time_Inside
+																							onClick={() =>
+																								this.onDeleteAssignedCourse(
+																									courseData.courseID
+																								)}
+																							hour={courseData.duration}
+																							start={courseData.start}
+																							end={courseData.end}
 																						>
-																							<span>
-																								<Tag color="#108ee9">
-																									room:
-																								</Tag>
-																							</span>
-																							{courseData.classroom}
-																						</div>
-																					</div>
-																				}
-																			>
-																				<Day_Time_Inside
-																					onClick={() =>
-																						this.onDeleteAssignedCourse(
-																							courseData.courseID
-																						)}
-																					hour={courseData.duration}
-																					start={courseData.start}
-																					end={courseData.end}
-																				>
-																					<Day_Time_Course_Name>
-																						{courseData.courseID +
-																							' ' +
-																							courseData.courseData
-																								.courseName}
-																					</Day_Time_Course_Name>
-																				</Day_Time_Inside>
-																			</Popover>
-																		</React.Fragment>
-																	);
-																}
-															})}
-														</Day_Time_Holder>
-													</Custom_Td>
-												);
-											} else {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('พ.', value[1])}
-													/>
-												);
-											}
-										})}
-									</tr>
-									<tr>
-										<Custom_Day_Td>Thursday</Custom_Day_Td>
-										{normal_time_slot.map((value, index) => {
-											if (index === 0) {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('พฤ.', value[1])}
-													>
-														<Day_Time_Holder>
-															{schedule_courses.map((courseData) => {
-																if (courseData.day === 'พฤ.') {
-																	return (
-																		<React.Fragment>
-																			<Popover
-																				content={
-																					<div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#76DA6B">
-																									time:
-																								</Tag>
-																							</span>
-																							{`${courseData.start} - ${courseData.end}`}
-																						</div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#bababa">
-																									section:
-																								</Tag>
-																							</span>
-																							{courseData.section}
-																						</div>
+																							<Day_Time_Course_Name>
+																								{courseData.courseID +
+																									' ' +
+																									courseData
+																										.courseData
+																										.courseName}
+																							</Day_Time_Course_Name>
+																						</Day_Time_Inside>
+																					</Popover>
+																				</React.Fragment>
+																			);
+																		}
+																	})}
+																</Day_Time_Holder>
+															</Custom_Td>
+														);
+													} else {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('อ.', value[1])}
+															/>
+														);
+													}
+												})}
+											</tr>
+											<tr>
+												<Custom_Day_Td>Wednesday</Custom_Day_Td>
+												{normal_time_slot.map((value, index) => {
+													if (index === 0) {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('พ.', value[1])}
+															>
+																<Day_Time_Holder>
+																	{schedule_courses.map((courseData) => {
+																		if (courseData.day === 'พ.') {
+																			return (
+																				<React.Fragment>
+																					<Popover
+																						content={
+																							<div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#76DA6B">
+																											time:
+																										</Tag>
+																									</span>
+																									{`${courseData.start} - ${courseData.end}`}
+																								</div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#bababa">
+																											section:
+																										</Tag>
+																									</span>
+																									{courseData.section}
+																								</div>
 
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#108ee9">
+																											room:
+																										</Tag>
+																									</span>
+																									{
+																										courseData.classroom
+																									}
+																								</div>
+																							</div>
+																						}
+																					>
+																						<Day_Time_Inside
+																							onClick={() =>
+																								this.onDeleteAssignedCourse(
+																									courseData.courseID
+																								)}
+																							hour={courseData.duration}
+																							start={courseData.start}
+																							end={courseData.end}
 																						>
-																							<span>
-																								<Tag color="#108ee9">
-																									room:
-																								</Tag>
-																							</span>
-																							{courseData.classroom}
-																						</div>
-																					</div>
-																				}
-																			>
-																				<Day_Time_Inside
-																					onClick={() =>
-																						this.onDeleteAssignedCourse(
-																							courseData.courseID
-																						)}
-																					hour={courseData.duration}
-																					start={courseData.start}
-																					end={courseData.end}
-																				>
-																					<Day_Time_Course_Name>
-																						{courseData.courseID +
-																							' ' +
-																							courseData.courseData
-																								.courseName}
-																					</Day_Time_Course_Name>
-																				</Day_Time_Inside>
-																			</Popover>
-																		</React.Fragment>
-																	);
-																}
-															})}
-														</Day_Time_Holder>
-													</Custom_Td>
-												);
-											} else {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('พฤ.', value[1])}
-													/>
-												);
-											}
-										})}
-									</tr>
-									<tr>
-										<Custom_Day_Td>Friday</Custom_Day_Td>
-										{normal_time_slot.map((value, index) => {
-											if (index === 0) {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('ศ.', value[1])}
-													>
-														<Day_Time_Holder>
-															{schedule_courses.map((courseData) => {
-																if (courseData.day === 'ศ.') {
-																	return (
-																		<React.Fragment>
-																			<Popover
-																				content={
-																					<div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#76DA6B">
-																									time:
-																								</Tag>
-																							</span>
-																							{`${courseData.start} - ${courseData.end}`}
-																						</div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#bababa">
-																									section:
-																								</Tag>
-																							</span>
-																							{courseData.section}
-																						</div>
+																							<Day_Time_Course_Name>
+																								{courseData.courseID +
+																									' ' +
+																									courseData
+																										.courseData
+																										.courseName}
+																							</Day_Time_Course_Name>
+																						</Day_Time_Inside>
+																					</Popover>
+																				</React.Fragment>
+																			);
+																		}
+																	})}
+																</Day_Time_Holder>
+															</Custom_Td>
+														);
+													} else {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('พ.', value[1])}
+															/>
+														);
+													}
+												})}
+											</tr>
+											<tr>
+												<Custom_Day_Td>Thursday</Custom_Day_Td>
+												{normal_time_slot.map((value, index) => {
+													if (index === 0) {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('พฤ.', value[1])}
+															>
+																<Day_Time_Holder>
+																	{schedule_courses.map((courseData) => {
+																		if (courseData.day === 'พฤ.') {
+																			return (
+																				<React.Fragment>
+																					<Popover
+																						content={
+																							<div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#76DA6B">
+																											time:
+																										</Tag>
+																									</span>
+																									{`${courseData.start} - ${courseData.end}`}
+																								</div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#bababa">
+																											section:
+																										</Tag>
+																									</span>
+																									{courseData.section}
+																								</div>
 
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#108ee9">
+																											room:
+																										</Tag>
+																									</span>
+																									{
+																										courseData.classroom
+																									}
+																								</div>
+																							</div>
+																						}
+																					>
+																						<Day_Time_Inside
+																							onClick={() =>
+																								this.onDeleteAssignedCourse(
+																									courseData.courseID
+																								)}
+																							hour={courseData.duration}
+																							start={courseData.start}
+																							end={courseData.end}
 																						>
-																							<span>
-																								<Tag color="#108ee9">
-																									room:
-																								</Tag>
-																							</span>
-																							{courseData.classroom}
-																						</div>
-																					</div>
-																				}
-																			>
-																				<Day_Time_Inside
-																					onClick={() =>
-																						this.onDeleteAssignedCourse(
-																							courseData.courseID
-																						)}
-																					hour={courseData.duration}
-																					start={courseData.start}
-																					end={courseData.end}
-																				>
-																					<Day_Time_Course_Name>
-																						{courseData.courseID +
-																							' ' +
-																							courseData.courseData
-																								.courseName}
-																					</Day_Time_Course_Name>
-																				</Day_Time_Inside>
-																			</Popover>
-																		</React.Fragment>
-																	);
-																}
-															})}
-														</Day_Time_Holder>
-													</Custom_Td>
-												);
-											} else {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('ศ.', value[1])}
-													/>
-												);
-											}
-										})}
-									</tr>
-									<tr>
-										<Custom_Day_Td>Saturday</Custom_Day_Td>
-										{normal_time_slot.map((value, index) => {
-											if (index === 0) {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('ส.', value[1])}
-													>
-														<Day_Time_Holder>
-															{schedule_courses.map((courseData) => {
-																if (courseData.day === 'ส.') {
-																	return (
-																		<React.Fragment>
-																			<Popover
-																				content={
-																					<div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#76DA6B">
-																									time:
-																								</Tag>
-																							</span>
-																							{`${courseData.start} - ${courseData.end}`}
-																						</div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#bababa">
-																									section:
-																								</Tag>
-																							</span>
-																							{courseData.section}
-																						</div>
+																							<Day_Time_Course_Name>
+																								{courseData.courseID +
+																									' ' +
+																									courseData
+																										.courseData
+																										.courseName}
+																							</Day_Time_Course_Name>
+																						</Day_Time_Inside>
+																					</Popover>
+																				</React.Fragment>
+																			);
+																		}
+																	})}
+																</Day_Time_Holder>
+															</Custom_Td>
+														);
+													} else {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('พฤ.', value[1])}
+															/>
+														);
+													}
+												})}
+											</tr>
+											<tr>
+												<Custom_Day_Td>Friday</Custom_Day_Td>
+												{normal_time_slot.map((value, index) => {
+													if (index === 0) {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('ศ.', value[1])}
+															>
+																<Day_Time_Holder>
+																	{schedule_courses.map((courseData) => {
+																		if (courseData.day === 'ศ.') {
+																			return (
+																				<React.Fragment>
+																					<Popover
+																						content={
+																							<div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#76DA6B">
+																											time:
+																										</Tag>
+																									</span>
+																									{`${courseData.start} - ${courseData.end}`}
+																								</div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#bababa">
+																											section:
+																										</Tag>
+																									</span>
+																									{courseData.section}
+																								</div>
 
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#108ee9">
+																											room:
+																										</Tag>
+																									</span>
+																									{
+																										courseData.classroom
+																									}
+																								</div>
+																							</div>
+																						}
+																					>
+																						<Day_Time_Inside
+																							onClick={() =>
+																								this.onDeleteAssignedCourse(
+																									courseData.courseID
+																								)}
+																							hour={courseData.duration}
+																							start={courseData.start}
+																							end={courseData.end}
 																						>
-																							<span>
-																								<Tag color="#108ee9">
-																									room:
-																								</Tag>
-																							</span>
-																							{courseData.classroom}
-																						</div>
-																					</div>
-																				}
-																			>
-																				<Day_Time_Inside
-																					onClick={() =>
-																						this.onDeleteAssignedCourse(
-																							courseData.courseID
-																						)}
-																					hour={courseData.duration}
-																					start={courseData.start}
-																					end={courseData.end}
-																				>
-																					<Day_Time_Course_Name>
-																						{courseData.courseID +
-																							' ' +
-																							courseData.courseData
-																								.courseName}
-																					</Day_Time_Course_Name>
-																				</Day_Time_Inside>
-																			</Popover>
-																		</React.Fragment>
-																	);
-																}
-															})}
-														</Day_Time_Holder>
-													</Custom_Td>
-												);
-											} else {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('ส.', value[1])}
-													/>
-												);
-											}
-										})}
-									</tr>
-									<tr>
-										<Custom_Day_Td>Sunday</Custom_Day_Td>
-										{normal_time_slot.map((value, index) => {
-											if (index === 0) {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('อา.', value[1])}
-													>
-														<Day_Time_Holder>
-															{schedule_courses.map((courseData) => {
-																if (courseData.day === 'อา.') {
-																	return (
-																		<React.Fragment>
-																			<Popover
-																				content={
-																					<div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#76DA6B">
-																									time:
-																								</Tag>
-																							</span>
-																							{`${courseData.start} - ${courseData.end}`}
-																						</div>
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
-																						>
-																							<span>
-																								<Tag color="#bababa">
-																									section:
-																								</Tag>
-																							</span>
-																							{courseData.section}
-																						</div>
+																							<Day_Time_Course_Name>
+																								{courseData.courseID +
+																									' ' +
+																									courseData
+																										.courseData
+																										.courseName}
+																							</Day_Time_Course_Name>
+																						</Day_Time_Inside>
+																					</Popover>
+																				</React.Fragment>
+																			);
+																		}
+																	})}
+																</Day_Time_Holder>
+															</Custom_Td>
+														);
+													} else {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('ศ.', value[1])}
+															/>
+														);
+													}
+												})}
+											</tr>
+											<tr>
+												<Custom_Day_Td>Saturday</Custom_Day_Td>
+												{normal_time_slot.map((value, index) => {
+													if (index === 0) {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('ส.', value[1])}
+															>
+																<Day_Time_Holder>
+																	{schedule_courses.map((courseData) => {
+																		if (courseData.day === 'ส.') {
+																			return (
+																				<React.Fragment>
+																					<Popover
+																						content={
+																							<div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#76DA6B">
+																											time:
+																										</Tag>
+																									</span>
+																									{`${courseData.start} - ${courseData.end}`}
+																								</div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#bababa">
+																											section:
+																										</Tag>
+																									</span>
+																									{courseData.section}
+																								</div>
 
-																						<div
-																							style={{
-																								marginBottom: '0.2rem'
-																							}}
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#108ee9">
+																											room:
+																										</Tag>
+																									</span>
+																									{
+																										courseData.classroom
+																									}
+																								</div>
+																							</div>
+																						}
+																					>
+																						<Day_Time_Inside
+																							onClick={() =>
+																								this.onDeleteAssignedCourse(
+																									courseData.courseID
+																								)}
+																							hour={courseData.duration}
+																							start={courseData.start}
+																							end={courseData.end}
 																						>
-																							<span>
-																								<Tag color="#108ee9">
-																									room:
-																								</Tag>
-																							</span>
-																							{courseData.classroom}
-																						</div>
-																					</div>
-																				}
-																			>
-																				<Day_Time_Inside
-																					onClick={() =>
-																						this.onDeleteAssignedCourse(
-																							courseData.courseID
-																						)}
-																					hour={courseData.duration}
-																					start={courseData.start}
-																					end={courseData.end}
-																				>
-																					<Day_Time_Course_Name>
-																						{courseData.courseID +
-																							' ' +
-																							courseData.courseData
-																								.courseName}
-																					</Day_Time_Course_Name>
-																				</Day_Time_Inside>
-																			</Popover>
-																		</React.Fragment>
-																	);
-																}
-															})}
-														</Day_Time_Holder>
-													</Custom_Td>
-												);
-											} else {
-												return (
-													<Custom_Td
-														onClick={() => this.onSelectTimelineInSchedule('อา.', value[1])}
-													/>
-												);
-											}
-										})}
-									</tr>
-								</tbody>
-							</Custom_Table>
-							<Custom_Bottom_Table>
-								<thead>
-									<tr>
-										<Custom_Main_Th>Ⓒ Copyright by SchedularizationV2</Custom_Main_Th>
-									</tr>
-								</thead>
-							</Custom_Bottom_Table>
-						</Schedule_Holder>
-					</PageHeaderMain>
-				</Outer_Holder>
-			</React.Fragment>
-		);
-	}
-}
+																							<Day_Time_Course_Name>
+																								{courseData.courseID +
+																									' ' +
+																									courseData
+																										.courseData
+																										.courseName}
+																							</Day_Time_Course_Name>
+																						</Day_Time_Inside>
+																					</Popover>
+																				</React.Fragment>
+																			);
+																		}
+																	})}
+																</Day_Time_Holder>
+															</Custom_Td>
+														);
+													} else {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('ส.', value[1])}
+															/>
+														);
+													}
+												})}
+											</tr>
+											<tr>
+												<Custom_Day_Td>Sunday</Custom_Day_Td>
+												{normal_time_slot.map((value, index) => {
+													if (index === 0) {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('อา.', value[1])}
+															>
+																<Day_Time_Holder>
+																	{schedule_courses.map((courseData) => {
+																		if (courseData.day === 'อา.') {
+																			return (
+																				<React.Fragment>
+																					<Popover
+																						content={
+																							<div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#76DA6B">
+																											time:
+																										</Tag>
+																									</span>
+																									{`${courseData.start} - ${courseData.end}`}
+																								</div>
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#bababa">
+																											section:
+																										</Tag>
+																									</span>
+																									{courseData.section}
+																								</div>
+
+																								<div
+																									style={{
+																										marginBottom:
+																											'0.2rem'
+																									}}
+																								>
+																									<span>
+																										<Tag color="#108ee9">
+																											room:
+																										</Tag>
+																									</span>
+																									{
+																										courseData.classroom
+																									}
+																								</div>
+																							</div>
+																						}
+																					>
+																						<Day_Time_Inside
+																							onClick={() =>
+																								this.onDeleteAssignedCourse(
+																									courseData.courseID
+																								)}
+																							hour={courseData.duration}
+																							start={courseData.start}
+																							end={courseData.end}
+																						>
+																							<Day_Time_Course_Name>
+																								{courseData.courseID +
+																									' ' +
+																									courseData
+																										.courseData
+																										.courseName}
+																							</Day_Time_Course_Name>
+																						</Day_Time_Inside>
+																					</Popover>
+																				</React.Fragment>
+																			);
+																		}
+																	})}
+																</Day_Time_Holder>
+															</Custom_Td>
+														);
+													} else {
+														return (
+															<Custom_Td
+																onClick={() =>
+																	this.onSelectTimelineInSchedule('อา.', value[1])}
+															/>
+														);
+													}
+												})}
+											</tr>
+										</tbody>
+									</Custom_Table>
+									<Custom_Bottom_Table>
+										<thead>
+											<tr>
+												<Custom_Main_Th>Ⓒ Copyright by SchedularizationV2</Custom_Main_Th>
+											</tr>
+										</thead>
+									</Custom_Bottom_Table>
+								</Schedule_Holder>
+							</PageHeaderMain>
+						</Outer_Holder>
+					</React.Fragment>
+				);
+			}
+		}
+	)
+);
+
+export default Schedule;
